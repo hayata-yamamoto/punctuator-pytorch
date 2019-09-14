@@ -14,7 +14,7 @@ def main() -> NoReturn:
         description="Data Science Project. Have Fun!",
         version="0.1.0",
         install_requires=req,
-        packages=find_packages(exclude=["punctuator/data"])
+        packages=find_packages(exclude=["data"])
     )
 
 if __name__ == '__main__':

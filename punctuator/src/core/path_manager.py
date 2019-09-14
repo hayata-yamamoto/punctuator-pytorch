@@ -3,12 +3,14 @@ from typing import List
 
 
 class PathManager:
-    BASE_DIR: Path = Path(__file__).resolve().parents[2]
+    BASE_DIR: Path = Path(__file__).resolve().parents[3]
     DATA: Path = BASE_DIR / "data"
-    NOTEBOOKS: Path = BASE_DIR / "notebooks"
-    MODULES: Path = BASE_DIR / "modules"
-    TESTS: Path = BASE_DIR / "tests"
-    SRC: Path = BASE_DIR / "src"
+    
+    ROOT_DIR: Path = BASE_DIR / 'punctuator'
+    NOTEBOOKS: Path = ROOT_DIR / "notebooks"
+    MODULES: Path = ROOT_DIR / "modules"
+    TESTS: Path = ROOT_DIR / "tests"
+    SRC: Path = ROOT_DIR / "src"
 
     # data directory
     RAW: Path = DATA / "raw"
