@@ -1,4 +1,5 @@
 from typing import List, Optional
+from pathlib import Path
 
 import pandas as pd
 from nltk import tokenize
@@ -11,7 +12,7 @@ def ted_data() -> pd.DataFrame:
     return pd.read_csv(PathManager.RAW / 'transcripts.csv')
 
 
-def write_txt(contents: List[str], filename: str) -> None:
+def write_txt(contents: List[str], filename: Path) -> None:
     with open(filename, 'w') as f:
         [f.write(s + '\n') for s in contents]
 
@@ -23,8 +24,9 @@ def make_records(sentence: str, res: Optional[List[str]] = None) -> List[str]:
         res = []
 
     for i in range(len(words)-1):
-        if words[i] == '.':
+        if words[i] in ['.', '?', ',']:
             continue
+
         s = words[i].lower()
         if words[i+1] == '.':
             res.append(f'{s} PERIOD')
