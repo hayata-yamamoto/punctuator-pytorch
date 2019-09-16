@@ -49,7 +49,6 @@ pickleshare==0.7.5
 pluggy==0.13.0
 prompt-toolkit==2.0.9
 ptyprocess==0.6.0
--e git+https://github.com/hayata-yamamoto/punctuator-pytorch.git@6a952f12c224817f15c62c1b4991aebfb01f90ad#egg=punctuator
 py==1.8.0
 Pygments==2.4.2
 pylint==2.3.1
