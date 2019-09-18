@@ -37,7 +37,7 @@ def make_records(sentence: str, res: Optional[List[str]] = None) -> List[str]:
         if words[i+1] == '?':
             res.append(f'{s} QUESTION')
             continue
-        res.append(f'{s} NONE')
+        res.append(f'{s} O')
 
     res.append('')
     return res

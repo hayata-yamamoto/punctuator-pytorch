@@ -6,7 +6,7 @@ from punctuator.src.core.path_manager import PathManager
 
 
 cols = {0: 'word', 1: 'PUNCT'}
-corpus = ColumnCorpus(PathManager.PROCESSED, cols, train_file='train.txt', dev_file='val.txt', test_file='test.txt')
+corpus = ColumnCorpus(PathManager.PROCESSED, cols, train_file='train.txt')
 
 tag_type = 'PUNCT'
 dictionary = corpus.make_tag_dictionary(tag_type=tag_type)
@@ -20,7 +20,7 @@ embeddings = StackedEmbeddings(embeddings=embedding_types)
 tagger = SequenceTagger(hidden_size=256, embeddings=embeddings, tag_dictionary=dictionary, tag_type=tag_type)
 trainer = ModelTrainer(tagger, corpus, use_tensorboard=True)
 
-trainer.train(PathManager.INTERIM / 'punctuator', max_epochs=10, mini_batch_size=100,eval_mini_batch_size=100, monitor_test=True, monitor_train=True)
+trainer.train(PathManager.INTERIM / 'punctuator', max_epochs=10, mini_batch_size=32, eval_mini_batch_size=32, monitor_test=True, monitor_train=True)
 
 # plotter = Plotter()
 # plotter.plot_weights(PathManager.INTERIM / 'punctuator/weights.txt')
