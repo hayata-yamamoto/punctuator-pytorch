@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 import torch
 from allennlp.data.vocabulary import Vocabulary
@@ -21,12 +21,13 @@ class LstmTagger(Model):
 
     def forward(self,
                 sentence: Dict[str, torch.Tensor],
-                labels: torch.Tensor = None) -> Dict[str, torch.Tensor]:
+                labels: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
         mask = get_text_field_mask(sentence)
         embeddings = self.word_embeddings(sentence)
         encoder_out = self.encoder(embeddings, mask)
         tag_logits = self.hidden2tag(encoder_out)
         output = {"tag_logits": tag_logits}
+
         if labels is not None:
             self.accuracy(tag_logits, labels, mask)
             output["loss"] = sequence_cross_entropy_with_logits(tag_logits, labels, mask)

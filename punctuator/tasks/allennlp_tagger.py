@@ -32,7 +32,7 @@ vocab = Vocabulary.from_instances(train_dataset + validation_dataset)
 token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
                             embedding_dim=args.embed)
 word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
-lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(args.embed, args.hidden, batch_first=True))
+lstm = PytorchSeq2SeqWrapper(torch.nn.GRU(args.embed, args.hidden, batch_first=True, bidirectional=True))
 model: LstmTagger = LstmTagger(word_embeddings, lstm, vocab)
 
 if torch.cuda.is_available():
@@ -49,11 +49,14 @@ trainer = Trainer(model=model,
                   iterator=iterator,
                   train_dataset=train_dataset,
                   validation_dataset=validation_dataset,
+                  validation_metric='+accuracy',
                   patience=10,
                   summary_interval=10,
                   num_epochs=args.epoch,
                   cuda_device=cuda_device)
 trainer.train()
+
+
 predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
 tag_logits = predictor.predict("The dog ate the apple")['tag_logits']
 tag_ids = np.argmax(tag_logits, axis=-1)
