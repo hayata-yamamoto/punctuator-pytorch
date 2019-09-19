@@ -16,9 +16,11 @@ from punctuator.src.models import LstmTagger
 
 
 parser = ArgumentParser()
-parser.add_argument('--embed', required=True, type=int)
-parser.add_argument('--hidden', required=True, type=int)
-parser.add_argument('--epoch', required=True, type=int)
+parser.add_argument('--embed', default=100, type=int)
+parser.add_argument('--hidden', default=100, type=int)
+parser.add_argument('--epoch', default=100, type=int)
+parser.add_argument('--batch', default=2, type=int)
+parser.add_argument('--lr', default=0.1, type=float)
 
 args = parser.parse_args()
 
@@ -27,13 +29,10 @@ train_dataset = reader.read(str(PathManager.PROCESSED / 'train.txt'))
 validation_dataset = reader.read(str(PathManager.PROCESSED / 'val.txt'))
 vocab = Vocabulary.from_instances(train_dataset + validation_dataset)
 
-EMBEDDING_DIM = 6
-HIDDEN_DIM = 6
-
 token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
                             embedding_dim=args.embed)
 word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
-lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(args.embed, args.hidden, batch_first=True))
+lstm = PytorchSeq2SeqWrapper(torch.nn.GRU(args.embed, args.hidden, batch_first=True, bidirectional=True))
 model: LstmTagger = LstmTagger(word_embeddings, lstm, vocab)
 
 if torch.cuda.is_available():
@@ -42,18 +41,22 @@ if torch.cuda.is_available():
 else:
     cuda_device = -1
 
-optimizer = optim.Adam(model.parameters(), lr=0.1)
-iterator = BucketIterator(batch_size=2, sorting_keys=[("sentence", "num_tokens")])
+optimizer = optim.Adam(model.parameters(), lr=args.lr)
+iterator = BucketIterator(batch_size=args.batch, sorting_keys=[("sentence", "num_tokens")])
 iterator.index_with(vocab)
 trainer = Trainer(model=model,
                   optimizer=optimizer,
                   iterator=iterator,
                   train_dataset=train_dataset,
                   validation_dataset=validation_dataset,
+                  validation_metric='+accuracy',
                   patience=10,
+                  summary_interval=10,
                   num_epochs=args.epoch,
                   cuda_device=cuda_device)
 trainer.train()
+
+
 predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
 tag_logits = predictor.predict("The dog ate the apple")['tag_logits']
 tag_ids = np.argmax(tag_logits, axis=-1)
