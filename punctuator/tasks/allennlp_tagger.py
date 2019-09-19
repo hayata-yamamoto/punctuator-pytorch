@@ -1,4 +1,5 @@
 import numpy as np
+from argparse import ArgumentParser
 import torch
 import torch.optim as optim
 from allennlp.data.iterators import BucketIterator
@@ -13,6 +14,14 @@ from punctuator.src.core.path_manager import PathManager
 from punctuator.src.datasets import TedDatasetReader
 from punctuator.src.models import LstmTagger
 
+
+parser = ArgumentParser()
+parser.add_argument('--embed', required=True, type=int)
+parser.add_argument('--hidden', required=True, type=int)
+parser.add_argument('--epoch', required=True, type=int)
+
+args = parser.parse_args()
+
 reader = TedDatasetReader()
 train_dataset = reader.read(str(PathManager.PROCESSED / 'train.txt'))
 validation_dataset = reader.read(str(PathManager.PROCESSED / 'val.txt'))
@@ -22,9 +31,9 @@ EMBEDDING_DIM = 6
 HIDDEN_DIM = 6
 
 token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
-                            embedding_dim=EMBEDDING_DIM)
+                            embedding_dim=args.embed)
 word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
-lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(EMBEDDING_DIM, HIDDEN_DIM, batch_first=True))
+lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(args.embed, args.hidden, batch_first=True))
 model: LstmTagger = LstmTagger(word_embeddings, lstm, vocab)
 
 if torch.cuda.is_available():
@@ -42,7 +51,7 @@ trainer = Trainer(model=model,
                   train_dataset=train_dataset,
                   validation_dataset=validation_dataset,
                   patience=10,
-                  num_epochs=1,
+                  num_epochs=args.epoch,
                   cuda_device=cuda_device)
 trainer.train()
 predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
