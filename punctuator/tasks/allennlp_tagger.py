@@ -46,14 +46,14 @@ trainer = Trainer(model=model,
                   cuda_device=cuda_device)
 trainer.train()
 
-
+s = """Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use to perform a specific task without using explicit instructions, relying on patterns and inference instead. It is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as "training data", in order to make predictions or decisions without being explicitly programmed to perform the task.[1][2]:2 Machine learning algorithms are used in a wide variety of applications, such as email filtering and computer vision, where it is difficult or infeasible to develop a conventional algorithm for effectively performing the task."""
 predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
-tag_logits = predictor.predict("The dog ate the apple")['tag_logits']
+tag_logits = predictor.predict(s)['tag_logits']
 tag_ids = np.argmax(tag_logits, axis=-1)
 print([model.vocab.get_token_from_index(i, 'labels') for i in tag_ids])
 
 # Here's how to save the model.
-with open("/tmp/model.th", 'wb') as f:
+with (PathManager.PROCESSED / "model.th").open(mode='wb') as f:
     torch.save(model.state_dict(), f)
-vocab.save_to_files("/tmp/vocabulary")
+vocab.save_to_files(PathManager.PROCESSED / "vocabulary")
 # And here's how to reload the model.

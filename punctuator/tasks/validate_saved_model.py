@@ -35,12 +35,15 @@ def main():
         model.cuda(cuda_device)
     predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
 
-    df = pd.read_csv(PathManager.INTERIM / 'val.csv')
-    labels = df.transcript.progress_apply(
-        lambda s: np.argmax(predictor.predict(
-            s.replace('.', '').replace('?', '').replace('!', '')
-        )['tag_logits'], axis=-1)
-    )
+    s = """Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use to perform a specific task without using explicit instructions, relying on patterns and inference instead. It is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as "training data", in order to make predictions or decisions without being explicitly programmed to perform the task.[1][2]:2 Machine learning algorithms are used in a wide variety of applications, such as email filtering and computer vision, where it is difficult or infeasible to develop a conventional algorithm for effectively performing the task."""
+    labels = np.argmax(predictor.predict(s.replace('.', '').replace('?', '').replace('!', ''))['tag_logts'], axis=-1)
+    #df = pd.read_csv(PathManager.INTERIM / 'val.csv')
+    #labels = df.transcript.progress_apply(
+    #    lambda s: np.argmax(predictor.predict(
+    #        s.replace('.', '').replace('?', '').replace('!', '')
+    #    )['tag_logits'], axis=-1)
+    #)
+    print(labels)
 
 
 if __name__ == '__main__':
