@@ -29,11 +29,13 @@ class TedDatasetReader(DatasetReader):
         return Instance(fields)
 
     def _read(self, file_path: str) -> Iterable[Instance]:
-        df = pd.DataFrame.from_records(file_path)
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+        df = pd.DataFrame.from_records(data)
 
         for i, row in df.iterrows():
             tokens = [Token(token) for token in row['tokens']]
-            yield self.text_to_instance(tokens=tokens, tags=tags)
+            yield self.text_to_instance(tokens=tokens, tags=row['tags'])
 
 
 def ted_data() -> pd.DataFrame:

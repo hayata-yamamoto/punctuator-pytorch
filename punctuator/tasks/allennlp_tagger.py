@@ -15,8 +15,8 @@ from punctuator.src.datasets import TedDatasetReader
 from punctuator.src.models import LstmTagger
 
 reader = TedDatasetReader()
-train_dataset = reader.read(str(PathManager.PROCESSED / 'train.txt'))
-validation_dataset = reader.read(str(PathManager.PROCESSED / 'val.txt'))
+train_dataset = reader.read(str(PathManager.PROCESSED / 'train.json'))
+validation_dataset = reader.read(str(PathManager.PROCESSED / 'val.json'))
 vocab = Vocabulary.from_instances(train_dataset + validation_dataset)
 
 token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
