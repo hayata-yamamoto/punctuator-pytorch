@@ -20,6 +20,7 @@ parser.add_argument('--embed', default=100, type=int)
 parser.add_argument('--hidden', default=100, type=int)
 parser.add_argument('--epoch', default=100, type=int)
 parser.add_argument('--batch', default=2, type=int)
+parser.add_argument('--lr', default=0.1, type=float)
 
 args = parser.parse_args()
 
@@ -40,7 +41,7 @@ if torch.cuda.is_available():
 else:
     cuda_device = -1
 
-optimizer = optim.Adam(model.parameters(), lr=0.1)
+optimizer = optim.Adam(model.parameters(), lr=args.lr)
 iterator = BucketIterator(batch_size=args.batch, sorting_keys=[("sentence", "num_tokens")])
 iterator.index_with(vocab)
 trainer = Trainer(model=model,
