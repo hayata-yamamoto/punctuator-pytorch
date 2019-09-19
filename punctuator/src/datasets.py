@@ -1,11 +1,42 @@
-from typing import List, Optional
 from pathlib import Path
+from typing import List, Optional, Dict, Iterable
 
 import pandas as pd
+from allennlp.data import Instance, Token
+from allennlp.data.dataset_readers import DatasetReader
+from allennlp.data.fields import SequenceLabelField, TextField
+from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
 from nltk import tokenize
 from tqdm import tqdm
 
 from punctuator.src.core.path_manager import PathManager
+
+
+class TedDatasetReader(DatasetReader):
+
+    def __init__(self, token_indexers: Optional[Dict[str, TokenIndexer]] = None) -> None:
+        super().__init__(lazy=False)
+        self.token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
+
+    def text_to_instance(self, tokens: List[Token], tags: List[str] = None) -> Instance:
+        sentence_field = TextField(tokens, self.token_indexers)
+        fields = {"sentence": sentence_field}
+        if tags:
+            label_field = SequenceLabelField(labels=tags, sequence_field=sentence_field)
+            fields["labels"] = label_field
+        return Instance(fields)
+
+    def _read(self, file_path: str) -> Iterable[Instance]:
+        tokens, tags = [], []
+        with open(file_path, 'r') as f:
+            for line in f:
+                if line == '\n':
+                    yield self.text_to_instance(tokens=tokens, tags=tags)
+                    tokens, tags = [], []
+                else:
+                    pairs = line.strip().split()
+                    tokens.append(Token(pairs[0]))
+                    tags.append(pairs[1])
 
 
 def ted_data() -> pd.DataFrame:
