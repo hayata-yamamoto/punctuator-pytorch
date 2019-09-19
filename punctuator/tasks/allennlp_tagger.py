@@ -1,5 +1,4 @@
 import numpy as np
-from argparse import ArgumentParser
 import torch
 import torch.optim as optim
 from allennlp.data.iterators import BucketIterator
@@ -10,19 +9,10 @@ from allennlp.modules.token_embedders import Embedding
 from allennlp.predictors import SentenceTaggerPredictor
 from allennlp.training import Trainer
 
+from punctuator.src.core.config import Config
 from punctuator.src.core.path_manager import PathManager
 from punctuator.src.datasets import TedDatasetReader
 from punctuator.src.models import LstmTagger
-
-
-parser = ArgumentParser()
-parser.add_argument('--embed', default=100, type=int)
-parser.add_argument('--hidden', default=100, type=int)
-parser.add_argument('--epoch', default=100, type=int)
-parser.add_argument('--batch', default=2, type=int)
-parser.add_argument('--lr', default=0.1, type=float)
-
-args = parser.parse_args()
 
 reader = TedDatasetReader()
 train_dataset = reader.read(str(PathManager.PROCESSED / 'train.txt'))
@@ -30,9 +20,9 @@ validation_dataset = reader.read(str(PathManager.PROCESSED / 'val.txt'))
 vocab = Vocabulary.from_instances(train_dataset + validation_dataset)
 
 token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
-                            embedding_dim=args.embed)
+                            embedding_dim=Config.EMBED_DIM)
 word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
-lstm = PytorchSeq2SeqWrapper(torch.nn.GRU(args.embed, args.hidden, batch_first=True, bidirectional=True))
+lstm = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
 model: LstmTagger = LstmTagger(word_embeddings, lstm, vocab)
 
 if torch.cuda.is_available():
@@ -41,8 +31,8 @@ if torch.cuda.is_available():
 else:
     cuda_device = -1
 
-optimizer = optim.Adam(model.parameters(), lr=args.lr)
-iterator = BucketIterator(batch_size=args.batch, sorting_keys=[("sentence", "num_tokens")])
+optimizer = optim.Adam(model.parameters(), lr=Config.LR)
+iterator = BucketIterator(batch_size=Config.BATCH_SIZE, sorting_keys=[("sentence", "num_tokens")])
 iterator.index_with(vocab)
 trainer = Trainer(model=model,
                   optimizer=optimizer,
@@ -52,7 +42,7 @@ trainer = Trainer(model=model,
                   validation_metric='+accuracy',
                   patience=10,
                   summary_interval=10,
-                  num_epochs=args.epoch,
+                  num_epochs=Config.EPOCH,
                   cuda_device=cuda_device)
 trainer.train()
 
@@ -67,12 +57,3 @@ with open("/tmp/model.th", 'wb') as f:
     torch.save(model.state_dict(), f)
 vocab.save_to_files("/tmp/vocabulary")
 # And here's how to reload the model.
-# vocab2 = Vocabulary.from_files("/tmp/vocabulary")
-# model2: LstmTagger = LstmTagger(word_embeddings, lstm, vocab2)
-# with open("/tmp/model.th", 'rb') as f:
-#     model2.load_state_dict(torch.load(f))
-# if cuda_device > -1:
-#     model2.cuda(cuda_device)
-# predictor2 = SentenceTaggerPredictor(model2, dataset_reader=reader)
-# tag_logits2 = predictor2.predict("The dog ate the apple")['tag_logits']
-# np.testing.assert_array_almost_equal(tag_logits2, tag_logits)

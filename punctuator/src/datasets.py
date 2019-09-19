@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Dict, Iterable
+from typing import List, Optional, Dict, Iterable, Callable
 
 import pandas as pd
 from allennlp.data import Instance, Token
@@ -14,7 +14,8 @@ from punctuator.src.core.path_manager import PathManager
 
 class TedDatasetReader(DatasetReader):
 
-    def __init__(self, token_indexers: Optional[Dict[str, TokenIndexer]] = None) -> None:
+    def __init__(self,
+                 token_indexers: Optional[Dict[str, TokenIndexer]] = None) -> None:
         super().__init__(lazy=False)
         self.token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
 
