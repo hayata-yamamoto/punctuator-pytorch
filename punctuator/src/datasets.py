@@ -1,7 +1,8 @@
 from pathlib import Path
-from typing import List, Optional, Dict, Iterable, Callable
+from typing import List, Optional, Dict, Iterable, Callable, Tuple
 
 import pandas as pd
+import json
 from allennlp.data import Instance, Token
 from allennlp.data.dataset_readers import DatasetReader
 from allennlp.data.fields import SequenceLabelField, TextField
@@ -28,16 +29,11 @@ class TedDatasetReader(DatasetReader):
         return Instance(fields)
 
     def _read(self, file_path: str) -> Iterable[Instance]:
-        tokens, tags = [], []
-        with open(file_path, 'r') as f:
-            for line in f:
-                if line == '\n':
-                    yield self.text_to_instance(tokens=tokens, tags=tags)
-                    tokens, tags = [], []
-                else:
-                    pairs = line.strip().split()
-                    tokens.append(Token(pairs[0]))
-                    tags.append(pairs[1])
+        df = pd.DataFrame.from_records(file_path)
+
+        for i, row in df.iterrows():
+            tokens = [Token(token) for token in row['tokens']]
+            yield self.text_to_instance(tokens=tokens, tags=tags)
 
 
 def ted_data() -> pd.DataFrame:
@@ -49,34 +45,36 @@ def write_txt(contents: List[str], filename: Path) -> None:
         [f.write(s + '\n') for s in contents]
 
 
-def make_records(sentence: str, res: Optional[List[str]] = None) -> List[str]:
-    words = tokenize.word_tokenize(sentence)
+def tagmap(word: str) -> str:
+    if word == ".":
+        return "PERIOD"
+    if word == "?":
+        return "QUESTION"
+    if word == ",":
+        return "COMMA"
+    else:
+        return "O"
 
-    if res is None:
-        res = []
+
+def tagging(sentence: str) -> Tuple[List[str], List[str]]:
+    words = tokenize.word_tokenize(sentence)
+    tokens, tags = [], []
 
     for i in range(len(words)-1):
         if words[i] in ['.', '?', ',']:
             continue
 
-        s = words[i].lower()
-        if words[i+1] == '.':
-            res.append(f'{s} PERIOD')
-            continue
-        if words[i+1] == ',':
-            res.append(f"{s} COMMA")
-            continue
-        if words[i+1] == '?':
-            res.append(f'{s} QUESTION')
-            continue
-        res.append(f'{s} O')
-
-    res.append('')
-    return res
+        tokens.append(words[i].lower())
+        tags.append(tagmap(words[i+1]))
+    return tokens, tags
 
 
-def make_dataset(df: pd.Series):
-    res = None
+def make_records(df: pd.Series) -> List[Dict[str, str]]:
+    records = []
     for i, sent in tqdm(df.iteritems(), total=df.shape[0]):
-        res = make_records(sent, res)
-    return res
+        tokens, tags = tagging(sentence=sent)
+        records.append({
+            "tokens": tokens,
+            "tags": tags
+        })
+    return records
