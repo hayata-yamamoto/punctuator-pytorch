@@ -9,6 +9,7 @@ from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
 from allennlp.modules.token_embedders import Embedding
 from allennlp.predictors import SentenceTaggerPredictor
+from tqdm import tqdm
 
 from punctuator.src.core.config import Config
 from punctuator.src.core.path_manager import PathManager
@@ -42,15 +43,16 @@ def main():
     with (PathManager.PROCESSED / 'val.json').open('r') as f:
         df = pd.DataFrame.from_records(json.load(f))
 
-    res = []
-    for i, row in df.iterrows():
-        logits = predictor.predict(s.lower().replace('.', '').replace('?', '').replace('!', ''))['tag_logits']
-        ids = np.argmax(logits, axis=-1)
-        labels = [model.vocab.get_token_from_index(i, 'labels') for i in ids]
-        res.extend(labels)
+    pred = []
+    true = []
+    for i, row in tqdm(df.iterrows(), total=df.shape[0]):
+        for s, t in zip(row['tokens'], row['tags']):
+            logit = predictor.predict(s.lower().replace('.', '').replace('?', '').replace(',', ''))['tag_logits']
+            idx = np.argmax(logit[0], axis=-1)
+            pred.append(model.vocab.get_token_from_index(idx, 'labels'))
+            true.append(t)
 
-    y_true = df.tags.values.flatten()
-    print(classification_report(y_true, res))
+    print(classification_report(true, res))
 
 
 if __name__ == '__main__':

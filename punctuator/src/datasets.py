@@ -63,10 +63,11 @@ def tagging(sentence: str) -> Tuple[List[str], List[str]]:
     tokens, tags = [], []
 
     for i in range(len(words)-1):
-        if words[i] in ['.', '?', ',']:
+        w = words[i].lower().replace('.', '').replace('?', '').replace(',', '')
+        if w == '':
             continue
 
-        tokens.append(words[i].lower())
+        tokens.append(w)
         tags.append(tagmap(words[i+1]))
     return tokens, tags
 
