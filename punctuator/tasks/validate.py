@@ -47,12 +47,12 @@ def main():
     true = []
     for i, row in tqdm(df.iterrows(), total=df.shape[0]):
         for s, t in zip(row['tokens'], row['tags']):
-            logit = predictor.predict(s.lower().replace('.', '').replace('?', '').replace(',', ''))['tag_logits']
+            logit = predictor.predict(s.lower())['tag_logits']
             idx = np.argmax(logit[0], axis=-1)
             pred.append(model.vocab.get_token_from_index(idx, 'labels'))
             true.append(t)
 
-    print(classification_report(true, res))
+    print(classification_report(true, pred))
 
 
 if __name__ == '__main__':
