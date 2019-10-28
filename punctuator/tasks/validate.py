@@ -13,12 +13,12 @@ from tqdm import tqdm
 
 from punctuator.src.core.config import Config
 from punctuator.src.core.path_manager import PathManager
-from punctuator.src.datasets import TedDatasetReader
+from punctuator.src.datasets import PunctuatorDatasetReader
 from punctuator.src.models import LstmTagger
 
 
 def main():
-    reader = TedDatasetReader()
+    reader = PunctuatorDatasetReader()
     vocab = Vocabulary.from_files(str(PathManager.PROCESSED / 'vocabulary'))
     token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
                                 embedding_dim=Config.EMBED_DIM)
