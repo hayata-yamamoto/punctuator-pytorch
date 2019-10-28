@@ -8,7 +8,7 @@ def main():
 
     make_data(train['en'], str(PathManager.RAW / 'train.csv'))
     make_data(dev['en'], str(PathManager.RAW / 'dev.csv'))
-    make_data(test['en'], str(PathManager.RAW / 'test.'))
+    make_data(test['en'], str(PathManager.RAW / 'test.csv'))
 
 
 if __name__ == '__main__':
