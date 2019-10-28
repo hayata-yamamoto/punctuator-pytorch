@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import List, Iterable
-
+from overrides import overrides
 import pandas as pd
 from allennlp.data import Instance, Token
 from allennlp.data.dataset_readers import SequenceTaggingDatasetReader
@@ -10,6 +10,7 @@ from punctuator.src.core.path_manager import PathManager
 
 class PunctuatorDatasetReader(SequenceTaggingDatasetReader):
 
+    @overrides
     def _read(self, file_path: str) -> Iterable[Instance]:
         df = pd.read_csv(file_path)
 
