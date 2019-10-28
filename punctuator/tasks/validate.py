@@ -42,13 +42,15 @@ def main():
 
     pred = []
     true = []
-    for s in tqdm(df['0']):
-        logit = predictor.predict(str(s))['tag_logits']
-        idx = np.argmax(logit[0], axis=-1)
-        pred.append(model.vocab.get_token_from_index(idx, 'labels'))
-        true.append(t)
+    s = df['0']
+    print(preditor.predict(str(s))
+#    for s in tqdm(df['0']):
+#        logit = predictor.predict(str(s))['tag_logits']
+#        idx = np.argmax(logit[0], axis=-1)
+#        pred.append(model.vocab.get_token_from_index(idx, 'labels'))
+#        true.append(t)
 
-    print(classification_report(true, pred))
+#    print(classification_report(true, pred))
 
 
 if __name__ == '__main__':
