@@ -43,7 +43,7 @@ def main():
     pred = []
     true = []
     s = df['0']
-    print(preditor.predict(str(s))
+    print(preditor.predict(str(s)))
 #    for s in tqdm(df['0']):
 #        logit = predictor.predict(str(s))['tag_logits']
 #        idx = np.argmax(logit[0], axis=-1)
