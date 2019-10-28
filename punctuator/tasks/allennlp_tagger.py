@@ -40,7 +40,7 @@ trainer = Trainer(model=model,
                   optimizer=optimizer,
                   iterator=iterator,
                   train_dataset=train_dataset,
-                  validation_dataset=validation_dataset,
+                  validation_dataset=dev_dataset,
                   validation_metric='+accuracy',
                   patience=10,
                   summary_interval=10,
@@ -48,7 +48,18 @@ trainer = Trainer(model=model,
                   cuda_device=cuda_device)
 trainer.train()
 
-s = """Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use to perform a specific task without using explicit instructions, relying on patterns and inference instead. It is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as "training data", in order to make predictions or decisions without being explicitly programmed to perform the task.[1][2]:2 Machine learning algorithms are used in a wide variety of applications, such as email filtering and computer vision, where it is difficult or infeasible to develop a conventional algorithm for effectively performing the task."""
+s = """
+Machine learning (ML) is the scientific study of algorithms and statistical models 
+that computer systems use to perform a specific task without using explicit 
+instructions, relying on patterns and inference instead. 
+It is seen as a subset of artificial intelligence. 
+Machine learning algorithms build a mathematical model based on sample data, known as
+ "training data", in order to make predictions or decisions without being explicitly
+  programmed to perform the task.[1][2]:2 Machine learning algorithms are used in a wide 
+  variety of applications, such as email filtering and computer vision, where it is difficult or infeasible
+   to develop a conventional algorithm for effectively performing the task.
+"""
+
 predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
 tag_logits = predictor.predict(s)['tag_logits']
 tag_ids = np.argmax(tag_logits, axis=-1)
