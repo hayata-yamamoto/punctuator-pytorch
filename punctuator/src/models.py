@@ -3,7 +3,7 @@ from typing import Dict, Optional
 import torch
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.models import Model
-from allennlp.modules.seq2seq_encoders import Seq2SeqEncoder
+from allennlp.modules.seq2vec_encoders import Seq2VecEncoder
 from allennlp.modules.text_field_embedders import TextFieldEmbedder
 from allennlp.nn.util import get_text_field_mask, sequence_cross_entropy_with_logits
 from allennlp.training.metrics import CategoricalAccuracy
@@ -11,7 +11,7 @@ from allennlp.training.metrics import CategoricalAccuracy
 
 class LstmTagger(Model):
 
-    def __init__(self, word_embeddings: TextFieldEmbedder, encoder: Seq2SeqEncoder, vocab: Vocabulary) -> None:
+    def __init__(self, word_embeddings: TextFieldEmbedder, encoder: Seq2VecEncoder, vocab: Vocabulary) -> None:
         super(LstmTagger, self).__init__(vocab)
         self.word_embeddings = word_embeddings
         self.encoder = encoder

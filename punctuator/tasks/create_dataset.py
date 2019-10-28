@@ -1,26 +1,14 @@
-import json
-
-import pandas as pd
-from sklearn.model_selection import train_test_split
-
+from torchnlp.datasets import iwslt_dataset
+from punctuator.src.datasets import make_data
 from punctuator.src.core.path_manager import PathManager
-from punctuator.src.datasets import ted_data, make_records
 
 
 def main():
-    series = ted_data()['transcript']
+    train, dev, test = iwslt_dataset(train=True, dev=True, test=True)
 
-    train, val = train_test_split(series)
-    pd.DataFrame(train).to_csv(PathManager.INTERIM / 'train.csv')
-    pd.DataFrame(val).to_csv(PathManager.INTERIM / 'val.csv')
-
-    train = make_records(train)
-    val = make_records(val)
-
-    with open(PathManager.PROCESSED / 'train.json', 'w') as f:
-        json.dump(train, f)
-    with open(PathManager.PROCESSED / 'val.json', 'w') as f:
-        json.dump(val, f)
+    make_data(train['en'], str(PathManager.RAW / 'train.csv'))
+    make_data(dev['en'], str(PathManager.RAW / 'dev.csv'))
+    make_data(test['en'], str(PathManager.RAW / 'test.'))
 
 
 if __name__ == '__main__':

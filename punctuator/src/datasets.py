@@ -1,41 +1,24 @@
 from pathlib import Path
-from typing import List, Optional, Dict, Iterable, Callable, Tuple
+from typing import List, Iterable
 
 import pandas as pd
-import json
 from allennlp.data import Instance, Token
-from allennlp.data.dataset_readers import DatasetReader
-from allennlp.data.fields import SequenceLabelField, TextField
-from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
-from nltk import tokenize
-from tqdm import tqdm
+from allennlp.data.dataset_readers import SequenceTaggingDatasetReader
 
 from punctuator.src.core.path_manager import PathManager
 
 
-class TedDatasetReader(DatasetReader):
-
-    def __init__(self,
-                 token_indexers: Optional[Dict[str, TokenIndexer]] = None) -> None:
-        super().__init__(lazy=False)
-        self.token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
-
-    def text_to_instance(self, tokens: List[Token], tags: List[str] = None) -> Instance:
-        sentence_field = TextField(tokens, self.token_indexers)
-        fields = {"sentence": sentence_field}
-        if tags:
-            label_field = SequenceLabelField(labels=tags, sequence_field=sentence_field)
-            fields["labels"] = label_field
-        return Instance(fields)
+class PunctuatorDatasetReader(SequenceTaggingDatasetReader):
 
     def _read(self, file_path: str) -> Iterable[Instance]:
-        with open(file_path, 'r') as f:
-            data = json.load(f)
-        df = pd.DataFrame.from_records(data)
+        df = pd.read_csv(file_path)
 
         for i, row in df.iterrows():
-            tokens = [Token(token) for token in row['tokens']]
-            yield self.text_to_instance(tokens=tokens, tags=row['tags'])
+            t = row.to_list()[0].split(' ')
+            tokens = [Token(s.split('###')[0]) for s in t]
+            tags = [s.split('###')[1] for s in t]
+
+            yield self.text_to_instance(tokens=tokens, tags=tags)
 
 
 def ted_data() -> pd.DataFrame:
@@ -48,36 +31,38 @@ def write_txt(contents: List[str], filename: Path) -> None:
 
 
 def tagmap(word: str) -> str:
-    if word == ".":
+    if word in [".", ";", "!"]:
         return "PERIOD"
     if word == "?":
         return "QUESTION"
-    if word == ",":
+    if word in [",", ":"]:
         return "COMMA"
     else:
         return "O"
 
 
-def tagging(sentence: str) -> Tuple[List[str], List[str]]:
-    words = tokenize.word_tokenize(sentence)
-    tokens, tags = [], []
+def tagging(sentence: str) -> str:
+    words = sentence\
+        .replace('.', ' .')\
+        .replace('?', ' ?')\
+        .replace(',', ' ,')\
+        .replace('!', ' !')\
+        .replace(';', ' ;')\
+        .replace(":", " :")\
+        .split(' ')
+    sent = []
 
-    for i in range(len(words)-1):
-        w = words[i].lower().replace('.', '').replace('?', '').replace(',', '')
+    for i in range(len(words) - 1):
+        w = words[i].replace('.', '').replace('?', '').replace('!', '').replace(',', '')
         if w == '':
             continue
 
-        tokens.append(w)
-        tags.append(tagmap(words[i+1]))
-    return tokens, tags
+        sent.append(f'{w}###{tagmap(words[i+1])}')
+    return ' '.join(sent)
 
 
-def make_records(df: pd.Series) -> List[Dict[str, str]]:
-    records = []
-    for i, sent in tqdm(df.iteritems(), total=df.shape[0]):
-        tokens, tags = tagging(sentence=sent)
-        records.append({
-            "tokens": tokens,
-            "tags": tags
-        })
-    return records
+def make_data(dataset: List[str], filename: str) -> None:
+    pd.DataFrame([tagging(d) for d in dataset]).to_csv(filename, index=False)
+    # with open(filename, 'w') as f:
+    #     for s in dataset:
+    #         f.write(tagging(s) + '\n')

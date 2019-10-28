@@ -11,13 +11,15 @@ from allennlp.training import Trainer
 
 from punctuator.src.core.config import Config
 from punctuator.src.core.path_manager import PathManager
-from punctuator.src.datasets import TedDatasetReader
+from punctuator.src.datasets import PunctuatorDatasetReader
 from punctuator.src.models import LstmTagger
 
-reader = TedDatasetReader()
-train_dataset = reader.read(str(PathManager.PROCESSED / 'train.json'))
-validation_dataset = reader.read(str(PathManager.PROCESSED / 'val.json'))
-vocab = Vocabulary.from_instances(train_dataset + validation_dataset)
+reader = PunctuatorDatasetReader()
+train_dataset = reader.read(str(PathManager.RAW / 'train.txt'))
+dev_dataset = reader.read(str(PathManager.RAW / 'dev.txt'))
+test_dataset = reader.read(str(PathManager.RAW / 'test.txt'))
+
+vocab = Vocabulary.from_instances(train_dataset + dev_dataset)
 
 token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
                             embedding_dim=Config.EMBED_DIM)

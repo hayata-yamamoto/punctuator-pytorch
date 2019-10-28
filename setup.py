@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 def main() -> NoReturn:
 
     f: IO
-    with open('requirements.txt', 'r') as f:
+    with open('sample-requirements.txt', 'r') as f:
         req = f.read().splitlines()
 
     setup(
