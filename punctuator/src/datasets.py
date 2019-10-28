@@ -12,10 +12,10 @@ class PunctuatorDatasetReader(SequenceTaggingDatasetReader):
 
     @overrides
     def _read(self, file_path: str) -> Iterable[Instance]:
-        df = pd.read_csv(file_path)
+        df = pd.read_csv(file_path).dropna()
 
-        for i, row in df.iterrows():
-            t = row.to_list()[0].split(' ')
+        for sent in df['0']:
+            t = str(sent).strip().split(' ')
             tokens = [Token(s.split('###')[0]) for s in t]
             tags = [s.split('###')[1] for s in t]
 

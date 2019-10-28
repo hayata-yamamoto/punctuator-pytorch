@@ -15,9 +15,9 @@ from punctuator.src.datasets import PunctuatorDatasetReader
 from punctuator.src.models import LstmTagger
 
 reader = PunctuatorDatasetReader()
-train_dataset = reader.read(str(PathManager.RAW / 'train.txt'))
-dev_dataset = reader.read(str(PathManager.RAW / 'dev.txt'))
-test_dataset = reader.read(str(PathManager.RAW / 'test.txt'))
+train_dataset = reader.read(str(PathManager.RAW / 'train.csv'))
+dev_dataset = reader.read(str(PathManager.RAW / 'dev.csv'))
+test_dataset = reader.read(str(PathManager.RAW / 'test.csv'))
 
 vocab = Vocabulary.from_instances(train_dataset + dev_dataset)
 
