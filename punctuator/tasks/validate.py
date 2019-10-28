@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import torch
+from allennlp.data import Token
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
@@ -38,19 +39,24 @@ def main():
         model.cuda(cuda_device)
     predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
 
+    class tokenizer:
+        @staticmethod
+        def split_words(s): 
+            return [Token(_.split('###')[0]) for _ in str(s).split(' ')]
+    
+    predictor._tokenizer = tokenizer()
+    
     df = pd.read_csv(PathManager.RAW / 'test.csv')
 
     pred = []
     true = []
-    s = df['0']
-    print(preditor.predict(str(s)))
-#    for s in tqdm(df['0']):
-#        logit = predictor.predict(str(s))['tag_logits']
-#        idx = np.argmax(logit[0], axis=-1)
-#        pred.append(model.vocab.get_token_from_index(idx, 'labels'))
-#        true.append(t)
+    for s in tqdm(df['0']):
+        logit = predictor.predict(str(s))['tag_logits']
+        idx = [np.argmax(logit[i], axis=-1) for i in range(len(logit))]
+        pred += [model.vocab.get_token_from_index(i, 'labels') for i in idx]
+        true += [_.split('###')[1] for _ in s.split(' ')]
 
-#    print(classification_report(true, pred))
+    print(classification_report(true, pred))
 
 
 if __name__ == '__main__':
