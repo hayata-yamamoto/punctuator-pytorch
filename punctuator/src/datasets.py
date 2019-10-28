@@ -1,15 +1,19 @@
 from pathlib import Path
-from typing import List, Iterable
+from typing import List, Iterable, Dict
 from overrides import overrides
 import pandas as pd
 from allennlp.data import Instance, Token
+from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
 from allennlp.data.fields import TextField, SequenceLabelField
-from allennlp.data.dataset_readers import SequenceTaggingDatasetReader
+from allennlp.data.dataset_readers import DatasetReader
 
 from punctuator.src.core.path_manager import PathManager
 
 
-class PunctuatorDatasetReader(SequenceTaggingDatasetReader):
+class PunctuatorDatasetReader(DatasetReader):
+    def __init__(self, token_indexers: Dict[str, TokenIndexer] = None) -> None:
+        super().__init__(lazy=False)
+        self.token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
 
     @overrides
     def _read(self, file_path: str) -> Iterable[Instance]:
