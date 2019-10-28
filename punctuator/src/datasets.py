@@ -3,6 +3,7 @@ from typing import List, Iterable
 from overrides import overrides
 import pandas as pd
 from allennlp.data import Instance, Token
+from allennlp.data.fields import TextField, SequenceLabelField
 from allennlp.data.dataset_readers import SequenceTaggingDatasetReader
 
 from punctuator.src.core.path_manager import PathManager
@@ -20,6 +21,16 @@ class PunctuatorDatasetReader(SequenceTaggingDatasetReader):
             tags = [s.split('###')[1] for s in t]
 
             yield self.text_to_instance(tokens=tokens, tags=tags)
+
+    def text_to_instance(self, tokens: List[Token], tags: List[str] = None) -> Instance:
+        sentence_field = TextField(tokens, self.token_indexers)
+        fields = {"sentence": sentence_field}
+
+        if tags:
+            label_field = SequenceLabelField(labels=tags, sequence_field=sentence_field)
+            fields["labels"] = label_field
+
+        return Instance(fields)
 
 
 def ted_data() -> pd.DataFrame:
