@@ -1,14 +1,11 @@
-import json
-
 import numpy as np
-import pandas as pd
-from sklearn.metrics import classification_report
 import torch
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
 from allennlp.modules.token_embedders import Embedding
 from allennlp.predictors import SentenceTaggerPredictor
+from sklearn.metrics import classification_report
 from tqdm import tqdm
 
 from punctuator.src.core.config import Config
@@ -40,17 +37,15 @@ def main():
         model.cuda(cuda_device)
     predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
 
-    with (PathManager.PROCESSED / 'val.json').open('r') as f:
-        df = pd.DataFrame.from_records(json.load(f))
+    df = pd.read_csv(PathManager.RAW / 'test.csv')
 
     pred = []
     true = []
-    for i, row in tqdm(df.iterrows(), total=df.shape[0]):
-        for s, t in zip(row['tokens'], row['tags']):
-            logit = predictor.predict(s.lower())['tag_logits']
-            idx = np.argmax(logit[0], axis=-1)
-            pred.append(model.vocab.get_token_from_index(idx, 'labels'))
-            true.append(t)
+    for s in tqdm(df['0']):
+        logit = predictor.predict(str(s))['tag_logits']
+        idx = np.argmax(logit[0], axis=-1)
+        pred.append(model.vocab.get_token_from_index(idx, 'labels'))
+        true.append(t)
 
     print(classification_report(true, pred))
 
