@@ -1,0 +1,26 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+allennlp = "==0.8.5"
+numpy = "==1.17.3"
+pandas = "==0.25.1"
+pytorch-crf = "==0.7.0"
+pytorch-transformers = "==1.1.0"
+scikit-learn = "==0.20.2"
+tensorboard = "==1.15.0"
+torch = "==1.0.0"
+torchnlp = "==0.0.0.1"
+tqdm = "==4.28.1"
+tensorboardX = "==1.8"
+pytest = "*"
+mypy = "*"
+sklearn = "*"
+overrides = "*"
+
+[requires]
+python_version = "3.7"
