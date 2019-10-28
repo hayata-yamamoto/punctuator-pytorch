@@ -63,7 +63,7 @@ Machine learning algorithms build a mathematical model based on sample data, kno
 predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
 tag_logits = predictor.predict(s)['tag_logits']
 tag_ids = np.argmax(tag_logits, axis=-1)
-print([model.vocab.get_token_from_index(i, 'tags') for i in tag_ids])
+print([model.vocab.get_token_from_index(i, 'labels') for i in tag_ids])
 
 # Here's how to save the model.
 with (PathManager.PROCESSED / "model.th").open(mode='wb') as f:
