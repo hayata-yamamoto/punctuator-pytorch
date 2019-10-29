@@ -14,16 +14,38 @@ from punctuator.src.core.path_manager import PathManager
 from punctuator.src.datasets import PunctuatorDatasetReader
 from punctuator.src.models import LstmTagger
 
-reader = PunctuatorDatasetReader()
+from allennlp.data.token_indexers import PretrainedBertIndexer
+
+from allennlp.data.token_indexers.elmo_indexer import ELMoTokenCharactersIndexer
+ 
+ # the token indexer is responsible for mapping tokens to integers
+token_indexer = ELMoTokenCharactersIndexer()
+#max_len = 100
+#token_indexer = PretrainedBertIndexer(
+#             pretrained_model="bert-base-uncased",
+#                 max_pieces=max_len,
+#                     do_lowercase=True,
+#                      )
+  
+#def tokenizer(s: str):
+#         return token_indexer.wordpiece_tokenizer(s)[:max_len - 2]
+from allennlp.modules.token_embedders import ElmoTokenEmbedder
+ 
+options_file = 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_options.json'
+weight_file = 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_weights.hdf5'
+elmo_embedder = ElmoTokenEmbedder(options_file, weight_file)
+
+reader = PunctuatorDatasetReader(token_indexers={'tokens': token_indexer})
 train_dataset = reader.read(str(PathManager.RAW / 'train.csv'))
 dev_dataset = reader.read(str(PathManager.RAW / 'dev.csv'))
 test_dataset = reader.read(str(PathManager.RAW / 'test.csv'))
 
 vocab = Vocabulary.from_instances(train_dataset + dev_dataset)
-
 token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
                             embedding_dim=Config.EMBED_DIM)
-word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
+# word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
+word_embeddings = BasicTextFieldEmbedder({"tokens": elmo_embedder})
+
 lstm = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
 model: LstmTagger = LstmTagger(word_embeddings, lstm, vocab)
 
@@ -33,7 +55,7 @@ if torch.cuda.is_available():
 else:
     cuda_device = -1
 
-optimizer = optim.Adam(model.parameters(), lr=Config.LR)
+optimizer = optim.Adam(model.parameters())
 iterator = BucketIterator(batch_size=Config.BATCH_SIZE, sorting_keys=[('sentence', 'num_tokens')])
 iterator.index_with(vocab)
 trainer = Trainer(model=model,
