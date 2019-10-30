@@ -64,8 +64,8 @@ trainer = Trainer(model=model,
                   train_dataset=train_dataset,
                   validation_dataset=dev_dataset,
                   validation_metric='+accuracy',
-                  patience=10,
-                  summary_interval=10,
+                  patience=5,
+                  summary_interval=5,
                   num_epochs=Config.EPOCH,
                   cuda_device=cuda_device)
 trainer.train()

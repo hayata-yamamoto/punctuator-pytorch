@@ -5,9 +5,10 @@ from allennlp.data import Token
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
-from allennlp.modules.token_embedders import Embedding
+from allennlp.modules.token_embedders import Embedding, ElmoTokenEmbedder
 from allennlp.predictors import SentenceTaggerPredictor
 from sklearn.metrics import classification_report
+from allennlp.data.token_indexers.elmo_indexer import ELMoTokenCharactersIndexer
 from tqdm import tqdm
 
 from punctuator.src.core.config import Config
@@ -17,11 +18,16 @@ from punctuator.src.models import LstmTagger
 
 
 def main():
-    reader = PunctuatorDatasetReader()
     vocab = Vocabulary.from_files(str(PathManager.PROCESSED / 'vocabulary'))
-    token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
-                                embedding_dim=Config.EMBED_DIM)
-    word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
+    # token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
+    #                             embedding_dim=Config.EMBED_DIM)
+    options_file = 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_options.json'
+    weight_file = 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_weights.hdf5'
+    
+    token_indexer = ELMoTokenCharactersIndexer()
+    elmo_embedder = ElmoTokenEmbedder(options_file, weight_file)
+    reader = PunctuatorDatasetReader(token_indexers={'tokens': token_indexer})
+    word_embeddings = BasicTextFieldEmbedder({"tokens": elmo_embedder})
     lstm = PytorchSeq2SeqWrapper(
         torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
     model: LstmTagger = LstmTagger(word_embeddings, lstm, vocab)
@@ -33,8 +39,8 @@ def main():
         cuda_device = -1
 
     with (PathManager.PROCESSED / "model.th").open(mode='rb') as f:
-        # model.load_state_dict(torch.load(f))
-        model.load_state_dict(torch.load(f, map_location='cpu'))
+        model.load_state_dict(torch.load(f))
+        # model.load_state_dict(torch.load(f, map_location='cpu'))
     if cuda_device > -1:
         model.cuda(cuda_device)
     predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
