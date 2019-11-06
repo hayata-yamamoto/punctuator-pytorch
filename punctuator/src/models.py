@@ -6,7 +6,7 @@ from allennlp.models import Model
 from allennlp.modules.seq2seq_encoders import Seq2SeqEncoder
 from allennlp.modules.text_field_embedders import TextFieldEmbedder
 from allennlp.nn.util import get_text_field_mask, sequence_cross_entropy_with_logits
-from allennlp.training.metrics import CategoricalAccuracy
+from allennlp.training.metrics import CategoricalAccuracy, F1Measure
 
 
 class Punctuator(Model):
@@ -19,6 +19,7 @@ class Punctuator(Model):
             in_features=encoder.get_output_dim(),
             out_features=vocab.get_vocab_size('labels'))
         self.accuracy = CategoricalAccuracy()
+        self.f1_measure = F1Measure()
 
     def forward(self,
                 sentence: Dict[str, torch.Tensor],
@@ -38,4 +39,7 @@ class Punctuator(Model):
         return output
 
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
-        return {'accuracy': self.accuracy.get_metric(reset)}
+        return {
+            'accuracy': self.accuracy.get_metric(reset),
+            'f1': self.f1_measure.get_metric(reset)
+        }

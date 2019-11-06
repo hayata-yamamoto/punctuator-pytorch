@@ -1,5 +1,6 @@
 from allennlp.modules.token_embedders import ElmoTokenEmbedder
 import numpy as np
+import pandas as pd
 import torch
 import torch.optim as optim
 from allennlp.data.iterators import BucketIterator
@@ -32,7 +33,7 @@ def main():
 
     vocab = Vocabulary.from_instances(train_dataset + dev_dataset)
     # token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
-                                # embedding_dim=Config.EMBED_DIM)
+    # embedding_dim=Config.EMBED_DIM)
     token_embedding = ElmoTokenEmbedder(options_file, weight_file)
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
@@ -55,7 +56,7 @@ def main():
                       iterator=iterator,
                       train_dataset=train_dataset,
                       validation_dataset=dev_dataset,
-                      validation_metric='+accuracy',
+                      validation_metric='+f1',
                       patience=10,
                       summary_interval=10,
                       num_epochs=Config.EPOCH,

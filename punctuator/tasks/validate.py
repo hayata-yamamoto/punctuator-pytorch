@@ -47,17 +47,13 @@ def main():
     predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
     predictor._tokenizer = PunctuatorTokenizer()
 
-    df = pd.read_csv(PathManager.RAW / 'test.csv')
-
-    pred = []
-    true = []
-    for s in tqdm(df['0']):
-        logit = predictor.predict(str(s))['tag_logits']
-        idx = [np.argmax(logit[i], axis=-1) for i in range(len(logit))]
-        pred += [model.vocab.get_token_from_index(i, 'labels') for i in idx]
-        true += [_.split('###')[1] for _ in s.split(' ')]
-
-    print(classification_report(true, pred))
+    while True:
+        sentence = input()
+        out = ''
+        for s in sentence.split(' '):
+            logit = predictor.predict(s)['tag_logits']
+            idx = np.argmax(logit, axis=-1)
+            label = model.vocab.get_token_from_index(idx, 'labels')
 
 
 if __name__ == '__main__':
