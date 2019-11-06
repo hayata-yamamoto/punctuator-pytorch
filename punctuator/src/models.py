@@ -9,19 +9,21 @@ from allennlp.nn.util import get_text_field_mask, sequence_cross_entropy_with_lo
 from allennlp.training.metrics import CategoricalAccuracy
 
 
-class LstmTagger(Model):
-
-    def __init__(self, word_embeddings: TextFieldEmbedder, encoder: Seq2SeqEncoder, vocab: Vocabulary) -> None:
-        super(LstmTagger, self).__init__(vocab)
+class Punctuator(Model):
+    def __init__(self, word_embeddings: TextFieldEmbedder,
+                 encoder: Seq2SeqEncoder, vocab: Vocabulary) -> None:
+        super(Punctuator, self).__init__(vocab)
         self.word_embeddings = word_embeddings
         self.encoder = encoder
-        self.hidden2tag = torch.nn.Linear(in_features=encoder.get_output_dim(),
-                                          out_features=vocab.get_vocab_size('labels'))
+        self.hidden2tag = torch.nn.Linear(
+            in_features=encoder.get_output_dim(),
+            out_features=vocab.get_vocab_size('labels'))
         self.accuracy = CategoricalAccuracy()
 
     def forward(self,
                 sentence: Dict[str, torch.Tensor],
-                labels: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
+                labels: Optional[torch.Tensor] = None
+                ) -> Dict[str, torch.Tensor]:
         mask = get_text_field_mask(sentence)
         embeddings = self.word_embeddings(sentence)
         encoder_out = self.encoder(embeddings, mask)
@@ -30,7 +32,8 @@ class LstmTagger(Model):
 
         if labels is not None:
             self.accuracy(tag_logits, labels, mask)
-            output["loss"] = sequence_cross_entropy_with_logits(tag_logits, labels, mask)
+            output["loss"] = sequence_cross_entropy_with_logits(
+                tag_logits, labels, mask)
 
         return output
 

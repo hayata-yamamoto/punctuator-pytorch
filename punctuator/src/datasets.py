@@ -10,10 +10,17 @@ from allennlp.data.dataset_readers import DatasetReader
 from punctuator.src.core.path_manager import PathManager
 
 
+class PunctuatorTokenizer:
+    @staticmethod
+    def split_words(s):
+        return [Token(_.split('###')[0]) for _ in str(s).split(' ')]
+
+
 class PunctuatorDatasetReader(DatasetReader):
     def __init__(self, token_indexers: Dict[str, TokenIndexer] = None) -> None:
         super().__init__(lazy=False)
-        self.token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
+        self.token_indexers = token_indexers or {
+            "tokens": SingleIdTokenIndexer()}
 
     @overrides
     def _read(self, file_path: str) -> Iterable[Instance]:
@@ -31,7 +38,8 @@ class PunctuatorDatasetReader(DatasetReader):
         fields = {"sentence": sentence_field}
 
         if tags:
-            label_field = SequenceLabelField(labels=tags, sequence_field=sentence_field)
+            label_field = SequenceLabelField(
+                labels=tags, sequence_field=sentence_field)
             fields["labels"] = label_field
 
         return Instance(fields)
@@ -69,7 +77,8 @@ def tagging(sentence: str) -> str:
     sent = []
 
     for i in range(len(words) - 1):
-        w = words[i].replace('.', '').replace('?', '').replace('!', '').replace(',', '')
+        w = words[i].replace('.', '').replace(
+            '?', '').replace('!', '').replace(',', '')
         if w == '':
             continue
 
