@@ -5,11 +5,10 @@ from allennlp.data import Token
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
-from allennlp.modules.token_embedders import Embedding
+from allennlp.modules.token_embedders import Embedding, ElmoTokenEmbedder
 from allennlp.predictors import SentenceTaggerPredictor
 from sklearn.metrics import classification_report
 from allennlp.data.token_indexers.elmo_indexer import ELMoTokenCharactersIndexer
-
 from tqdm import tqdm
 
 from punctuator.src.core.config import Config
@@ -41,8 +40,8 @@ def main():
         cuda_device = -1
 
     with (PathManager.PROCESSED / "model.th").open(mode='rb') as f:
-        # model.load_state_dict(torch.load(f))
-        model.load_state_dict(torch.load(f, map_location='cpu'))
+        model.load_state_dict(torch.load(f))
+        # model.load_state_dict(torch.load(f, map_location='cpu'))
     if cuda_device > -1:
         model.cuda(cuda_device)
     predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
