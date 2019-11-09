@@ -10,6 +10,7 @@ yapf = "*"
 pytest = "*"
 pytorch-nlp = "*"
 setuptools = "*"
+comet-ml = "*"
 
 [packages]
 allennlp = "*"

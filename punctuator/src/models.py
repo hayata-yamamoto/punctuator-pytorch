@@ -19,7 +19,6 @@ class Punctuator(Model):
             in_features=encoder.get_output_dim(),
             out_features=vocab.get_vocab_size('labels'))
         self.accuracy = CategoricalAccuracy()
-        self.f1_measure = F1Measure()
 
     def forward(self,
                 sentence: Dict[str, torch.Tensor],
@@ -41,5 +40,4 @@ class Punctuator(Model):
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
         return {
             'accuracy': self.accuracy.get_metric(reset),
-            'f1': self.f1_measure.get_metric(reset)
         }
