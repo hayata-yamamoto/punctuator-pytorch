@@ -1,20 +1,18 @@
-import pandas as pd
 import numpy as np
 import torch
-from allennlp.data import Token
+from allennlp.data.token_indexers.elmo_indexer import \
+    ELMoTokenCharactersIndexer
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
-from allennlp.modules.token_embedders import Embedding, ElmoTokenEmbedder
+from allennlp.modules.token_embedders import ElmoTokenEmbedder
 from allennlp.predictors import SentenceTaggerPredictor
-from sklearn.metrics import classification_report
-from allennlp.data.token_indexers.elmo_indexer import ELMoTokenCharactersIndexer
-from tqdm import tqdm
 
-from punctuator.src.core.config import Config
-from punctuator.src.core.path_manager import PathManager
-from punctuator.src.datasets import PunctuatorDatasetReader, PunctuatorTokenizer
+from punctuator.src.config import Config
+from punctuator.src.datasets import (PunctuatorDatasetReader,
+                                     PunctuatorTokenizer)
 from punctuator.src.models import Punctuator
+from punctuator.src.path_manager import PathManager
 
 
 def main():
@@ -30,7 +28,10 @@ def main():
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
     lstm = PytorchSeq2SeqWrapper(
-        torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
+        torch.nn.GRU(Config.EMBED_DIM,
+                     Config.HIDDEN_DIM,
+                     batch_first=True,
+                     bidirectional=True))
     model: Punctuator = Punctuator(word_embeddings, lstm, vocab)
 
     if torch.cuda.is_available():

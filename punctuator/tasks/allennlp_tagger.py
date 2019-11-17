@@ -2,23 +2,23 @@ import numpy as np
 import torch
 import torch.optim as optim
 from allennlp.data.iterators import BucketIterator
+from allennlp.data.token_indexers.elmo_indexer import \
+    ELMoTokenCharactersIndexer
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
-from allennlp.modules.token_embedders import Embedding
+#def tokenizer(s: str):
+#         return token_indexer.wordpiece_tokenizer(s)[:max_len - 2]
+from allennlp.modules.token_embedders import ElmoTokenEmbedder, Embedding
 from allennlp.predictors import SentenceTaggerPredictor
 from allennlp.training import Trainer
 
-from punctuator.src.core.config import Config
-from punctuator.src.core.path_manager import PathManager
+from punctuator.src.config import Config
 from punctuator.src.datasets import PunctuatorDatasetReader
 from punctuator.src.models import LstmTagger
+from punctuator.src.path_manager import PathManager
 
-from allennlp.data.token_indexers import PretrainedBertIndexer
-
-from allennlp.data.token_indexers.elmo_indexer import ELMoTokenCharactersIndexer
- 
- # the token indexer is responsible for mapping tokens to integers
+# the token indexer is responsible for mapping tokens to integers
 token_indexer = ELMoTokenCharactersIndexer()
 #max_len = 100
 #token_indexer = PretrainedBertIndexer(
@@ -26,11 +26,8 @@ token_indexer = ELMoTokenCharactersIndexer()
 #                 max_pieces=max_len,
 #                     do_lowercase=True,
 #                      )
-  
-#def tokenizer(s: str):
-#         return token_indexer.wordpiece_tokenizer(s)[:max_len - 2]
-from allennlp.modules.token_embedders import ElmoTokenEmbedder
- 
+
+
 options_file = 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_options.json'
 weight_file = 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_weights.hdf5'
 elmo_embedder = ElmoTokenEmbedder(options_file, weight_file)
@@ -46,7 +43,11 @@ token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
 # word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 word_embeddings = BasicTextFieldEmbedder({"tokens": elmo_embedder})
 
-lstm = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
+lstm = PytorchSeq2SeqWrapper(
+    torch.nn.GRU(Config.EMBED_DIM,
+                 Config.HIDDEN_DIM,
+                 batch_first=True,
+                 bidirectional=True))
 model: LstmTagger = LstmTagger(word_embeddings, lstm, vocab)
 
 if torch.cuda.is_available():
@@ -56,7 +57,8 @@ else:
     cuda_device = -1
 
 optimizer = optim.Adam(model.parameters())
-iterator = BucketIterator(batch_size=Config.BATCH_SIZE, sorting_keys=[('sentence', 'num_tokens')])
+iterator = BucketIterator(batch_size=Config.BATCH_SIZE,
+                          sorting_keys=[('sentence', 'num_tokens')])
 iterator.index_with(vocab)
 trainer = Trainer(model=model,
                   optimizer=optimizer,

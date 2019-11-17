@@ -6,11 +6,13 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 mypy = "*"
-yapf = "*"
 pytest = "*"
 pytorch-nlp = "*"
 setuptools = "*"
 comet-ml = "*"
+yapf = "*"
+environs = "*"
+isort = "*"
 
 [packages]
 allennlp = "*"
@@ -28,3 +30,6 @@ overrides = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true

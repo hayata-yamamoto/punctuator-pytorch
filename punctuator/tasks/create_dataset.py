@@ -1,6 +1,7 @@
 from torchnlp.datasets import iwslt_dataset
+
 from punctuator.src.datasets import make_data
-from punctuator.src.core.path_manager import PathManager
+from punctuator.src.path_manager import PathManager
 
 
 def main():

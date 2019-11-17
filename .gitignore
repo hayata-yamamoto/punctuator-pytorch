@@ -1,5 +1,7 @@
 .idea/
-
+data/
+credentials/
+!credentials/.env-sample
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

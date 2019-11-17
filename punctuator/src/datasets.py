@@ -1,13 +1,14 @@
 from pathlib import Path
-from typing import List, Iterable, Dict
-from overrides import overrides
+from typing import Dict, Iterable, List
+
 import pandas as pd
 from allennlp.data import Instance, Token
-from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
-from allennlp.data.fields import TextField, SequenceLabelField
 from allennlp.data.dataset_readers import DatasetReader
+from allennlp.data.fields import SequenceLabelField, TextField
+from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenIndexer
+from overrides import overrides
 
-from punctuator.src.core.path_manager import PathManager
+from punctuator.src.path_manager import PathManager
 
 
 class PunctuatorTokenizer:
@@ -20,7 +21,8 @@ class PunctuatorDatasetReader(DatasetReader):
     def __init__(self, token_indexers: Dict[str, TokenIndexer] = None) -> None:
         super().__init__(lazy=False)
         self.token_indexers = token_indexers or {
-            "tokens": SingleIdTokenIndexer()}
+            "tokens": SingleIdTokenIndexer()
+        }
 
     @overrides
     def _read(self, file_path: str) -> Iterable[Instance]:
@@ -33,13 +35,14 @@ class PunctuatorDatasetReader(DatasetReader):
 
             yield self.text_to_instance(tokens=tokens, tags=tags)
 
-    def text_to_instance(self, tokens: List[Token], tags: List[str] = None) -> Instance:
+    def text_to_instance(self, tokens: List[Token],
+                         tags: List[str] = None) -> Instance:
         sentence_field = TextField(tokens, self.token_indexers)
         fields = {"sentence": sentence_field}
 
         if tags:
-            label_field = SequenceLabelField(
-                labels=tags, sequence_field=sentence_field)
+            label_field = SequenceLabelField(labels=tags,
+                                             sequence_field=sentence_field)
             fields["labels"] = label_field
 
         return Instance(fields)
@@ -77,8 +80,9 @@ def tagging(sentence: str) -> str:
     sent = []
 
     for i in range(len(words) - 1):
-        w = words[i].replace('.', '').replace(
-            '?', '').replace('!', '').replace(',', '')
+        w = words[i].replace('.', '').replace('?',
+                                              '').replace('!',
+                                                          '').replace(',', '')
         if w == '':
             continue
 
