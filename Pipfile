@@ -31,5 +31,8 @@ overrides = "*"
 [requires]
 python_version = "3.7"
 
+[scripts]
+yapf = "yapf -r -i punctuator"
+
 [pipenv]
 allow_prereleases = true
