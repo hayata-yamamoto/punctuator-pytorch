@@ -2,6 +2,7 @@ from dataclasses import asdict
 
 import numpy as np
 import pandas as pd
+from comet_ml import Experiment
 import torch
 import torch.optim as optim
 from allennlp.data.iterators import BucketIterator
@@ -14,7 +15,6 @@ from allennlp.modules.token_embedders import ElmoTokenEmbedder
 from allennlp.predictors import SentenceTaggerPredictor
 from allennlp.training import Trainer
 from sklearn.metrics import classification_report
-from comet_ml import Experiment
 
 from punctuator.src.config import Config, EnvFile
 from punctuator.src.datasets import (PunctuatorDatasetReader,
@@ -29,12 +29,12 @@ def main():
                             workspace=EnvFile.WORKSPACE)
 
     experiment.log_parameters({
-        "embed_dim": Config.EMBED_DIM, 
-        "batch_size": Config.BATCH_SIZE, 
-        "lr": Config.LR, 
+        "embed_dim": Config.EMBED_DIM,
+        "batch_size": Config.BATCH_SIZE,
+        "lr": Config.LR,
         "hidden_dim": Config.HIDDEN_DIM,
         "epoch": Config.EPOCH
-    }
+    })
     token_indexer = ELMoTokenCharactersIndexer()
     reader = PunctuatorDatasetReader(token_indexers={'tokens': token_indexer})
     train_dataset = reader.read(str(PathManager.RAW / 'train.csv'))
