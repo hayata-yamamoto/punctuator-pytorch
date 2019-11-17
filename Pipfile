@@ -32,7 +32,11 @@ overrides = "*"
 python_version = "3.7"
 
 [scripts]
-yapf = "yapf -r -i punctuator"
+install = "python3 setup.py install"
+develop = "python3 setup.py develop"
+
+# Formatter
+format = "isort -rc punctuator && yapf -r -i punctuator"
 
 [pipenv]
 allow_prereleases = true

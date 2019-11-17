@@ -1,11 +1,8 @@
-from dataclasses import dataclass
-
 from environs import Env
 
 from punctuator.src.path_manager import PathManager
 
 
-@dataclass(frozen=True)
 class Config:
     EMBED_DIM = 256
     HIDDEN_DIM = 500
@@ -13,9 +10,14 @@ class Config:
     EPOCH = 100
     LR = 0.1
 
-    class CometMl:
-        env = Env()
-        env.read_env(PathManager.CREDENTIALS / '.env')
-        API_KEY = env('COMETML_API_KEY')
-        PROJECT_NAME = env("COMETML_PROJECT_NAME")
-        WORKSPACE = env("COMETML_WORKSPACE")
+
+class EnvFile:
+    env = Env()
+    env.read_env(str(PathManager.CREDENTIALS / '.env'))
+
+    OPTIONS_FILE = env("OPTIONS_FILE")
+    WEIGHT_FILE = env("WEIGHT_FILE")
+
+    API_KEY = env('COMETML_API_KEY')
+    PROJECT_NAME = env("COMETML_PROJECT_NAME")
+    WORKSPACE = env("COMETML_WORKSPACE")

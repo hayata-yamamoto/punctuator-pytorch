@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 import numpy as np
 import pandas as pd
 import torch
@@ -14,7 +16,7 @@ from allennlp.training import Trainer
 from sklearn.metrics import classification_report
 from comet_ml import Experiment
 
-from punctuator.src.config import Config
+from punctuator.src.config import Config, EnvFile
 from punctuator.src.datasets import (PunctuatorDatasetReader,
                                      PunctuatorTokenizer)
 from punctuator.src.models import Punctuator
@@ -22,22 +24,25 @@ from punctuator.src.path_manager import PathManager
 
 
 def main():
-    experiment = Experiment(api_key=Config.CometMl.API_KEY,
-                            project_name=Config.CometMl.PROJECT_NAME,
-                            workspace=Config.CometMl.WORKSPACE)
+    experiment = Experiment(api_key=EnvFile.API_KEY,
+                            project_name=EnvFile.PROJECT_NAME,
+                            workspace=EnvFile.WORKSPACE)
 
-    options_file = 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_options.json'
-    weight_file = 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_weights.hdf5'
-
+    experiment.log_parameters({
+        "embed_dim": Config.EMBED_DIM, 
+        "batch_size": Config.BATCH_SIZE, 
+        "lr": Config.LR, 
+        "hidden_dim": Config.HIDDEN_DIM,
+        "epoch": Config.EPOCH
+    }
     token_indexer = ELMoTokenCharactersIndexer()
     reader = PunctuatorDatasetReader(token_indexers={'tokens': token_indexer})
     train_dataset = reader.read(str(PathManager.RAW / 'train.csv'))
     dev_dataset = reader.read(str(PathManager.RAW / 'dev.csv'))
 
     vocab = Vocabulary.from_instances(train_dataset + dev_dataset)
-    # token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
-    # embedding_dim=Config.EMBED_DIM)
-    token_embedding = ElmoTokenEmbedder(options_file, weight_file)
+    token_embedding = ElmoTokenEmbedder(EnvFile.OPTIONS_FILE,
+                                        EnvFile.WEIGHT_FILE)
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
     lstm = PytorchSeq2SeqWrapper(
@@ -67,7 +72,8 @@ def main():
                       summary_interval=10,
                       num_epochs=Config.EPOCH,
                       cuda_device=cuda_device)
-    trainer.train()
+    metrics = trainer.train()
+    experiment.log_metrics(metrics)
 
     # Here's how to save the model.
     with (PathManager.PROCESSED / "model.th").open(mode='wb') as f:

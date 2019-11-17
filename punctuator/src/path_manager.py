@@ -3,7 +3,7 @@ from typing import List
 
 
 class PathManager:
-    BASE_DIR: Path = Path(__file__).resolve().parents[3]
+    BASE_DIR: Path = Path(__file__).resolve().parents[2]
     DATA: Path = BASE_DIR / "data"
     CREDENTIALS: Path = BASE_DIR / "credentials"
 
