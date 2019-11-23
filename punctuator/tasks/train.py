@@ -2,7 +2,6 @@ from dataclasses import asdict
 
 import numpy as np
 import pandas as pd
-from comet_ml import Experiment
 import torch
 import torch.optim as optim
 from allennlp.data.iterators import BucketIterator
@@ -24,17 +23,7 @@ from punctuator.src.path_manager import PathManager
 
 
 def main():
-    experiment = Experiment(api_key=EnvFile.API_KEY,
-                            project_name=EnvFile.PROJECT_NAME,
-                            workspace=EnvFile.WORKSPACE)
-
-    experiment.log_parameters({
-        "embed_dim": Config.EMBED_DIM,
-        "batch_size": Config.BATCH_SIZE,
-        "lr": Config.LR,
-        "hidden_dim": Config.HIDDEN_DIM,
-        "epoch": Config.EPOCH
-    })
+    torch.manual_seed(1)
     token_indexer = ELMoTokenCharactersIndexer()
     reader = PunctuatorDatasetReader(token_indexers={'tokens': token_indexer})
     train_dataset = reader.read(str(PathManager.RAW / 'train.csv'))
@@ -62,18 +51,18 @@ def main():
     iterator = BucketIterator(batch_size=Config.BATCH_SIZE,
                               sorting_keys=[('sentence', 'num_tokens')])
     iterator.index_with(vocab)
+
     trainer = Trainer(model=model,
-                      optimizer=optimizer,
-                      iterator=iterator,
-                      train_dataset=train_dataset,
-                      validation_dataset=dev_dataset,
-                      validation_metric='+f1',
-                      patience=10,
-                      summary_interval=10,
-                      num_epochs=Config.EPOCH,
-                      cuda_device=cuda_device)
+                  optimizer=optimizer,
+                  iterator=iterator,
+                  train_dataset=train_dataset,
+                  validation_dataset=dev_dataset,
+                  validation_metric='+f1',
+                  patience=10,
+                  summary_interval=10,
+                  num_epochs=Config.EPOCH,
+                  cuda_device=cuda_device)
     metrics = trainer.train()
-    experiment.log_metrics(metrics)
 
     # Here's how to save the model.
     with (PathManager.PROCESSED / "model.th").open(mode='wb') as f:
@@ -131,7 +120,6 @@ Machine learning algorithms build a mathematical model based on sample data, kno
     print('Predict Sentence ')
     print("==============")
     print(reconstruct(s.strip().split(' '), pred))
-
 
 if __name__ == '__main__':
     main()
