@@ -1,6 +1,6 @@
 FROM python:3.7-slim
 
-WORKDIR punctuator/
+WORKDIR punctuator-pytorch/
 
 RUN set -x \
   && apt-get update -yqq \
@@ -18,11 +18,5 @@ RUN set -x \
 
 COPY ./ ./
 
-RUN pip3 install pipenv \
-  && pipenv sync --dev \
-  && pipenv run develop \
-  && rm -rf /var/lib/apt/lists/*
-
-
-CMD ["/bin/bash", "-c", "echo 'python container"]
+CMD ["/bin/bash", "-c", "pipenv sync --dev && pipenv run python punctuator/tasks/create_dataset.py && pipenv run python punctuator/tasks/train.py"]
 
