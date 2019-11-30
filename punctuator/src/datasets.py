@@ -90,8 +90,8 @@ def tagging(sentence: str) -> str:
     return ' '.join(sent)
 
 
-def make_data(dataset: List[str], filename: str) -> None:
-    pd.DataFrame([tagging(d) for d in dataset]).to_csv(filename, index=False)
+def make_data(dataset: List[str], lang: str,  filename: str) -> None:
+    pd.DataFrame([tagging(d[lang]) for d in dataset]).to_csv(filename, index=False)
     # with open(filename, 'w') as f:
     #     for s in dataset:
     #         f.write(tagging(s) + '\n')
