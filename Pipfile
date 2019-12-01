@@ -35,7 +35,7 @@ python_version = "3.7"
 install = "python3 setup.py install"
 develop = "python3 setup.py develop"
 # Formatter
-format = "isort -rm punctuator && yapf -r -i punctuator"
+format = "yapf --recursive -i punctuator"
 
 [pipenv]
 allow_prereleases = true

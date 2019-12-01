@@ -1,6 +1,6 @@
 .idea/
 data/
-credentials/
+.env
 !credentials/.env-sample
 
 # Byte-compiled / optimized / DLL files
