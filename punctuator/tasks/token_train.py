@@ -3,34 +3,35 @@ import pandas as pd
 import torch
 import torch.optim as optim
 from allennlp.data.iterators import BucketIterator
-from allennlp.data.token_indexers.elmo_indexer import ELMoTokenCharactersIndexer
+from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
-from allennlp.modules.token_embedders import ElmoTokenEmbedder
+from allennlp.modules.token_embedders import Embedding
 from allennlp.predictors import SentenceTaggerPredictor
 from allennlp.training import Trainer
 from sklearn.metrics import classification_report
 from tqdm import tqdm
 
-from punctuator.src.config import Config, EnvFile
+from punctuator.src.config import Config
 from punctuator.src.datasets.datasets import (
     PunctuatorDatasetReader,
     PunctuatorTokenizer,
 )
+from punctuator.src.datasets.utils import reconstruct
 from punctuator.src.models import Punctuator
 from punctuator.src.path_manager import PathManager
 
 
 def main():
     torch.manual_seed(1)
-    token_indexer = ELMoTokenCharactersIndexer()
+    token_indexer = SingleIdTokenIndexer()
     reader = PunctuatorDatasetReader(token_indexers={"tokens": token_indexer})
     train_dataset = reader.read(str(PathManager.RAW / "train.csv"))
     dev_dataset = reader.read(str(PathManager.RAW / "dev.csv"))
 
     vocab = Vocabulary.from_instances(train_dataset + dev_dataset)
-    token_embedding = ElmoTokenEmbedder(EnvFile.OPTIONS_FILE, EnvFile.WEIGHT_FILE)
+    token_embedding = Embedding()
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
     lstm = PytorchSeq2SeqWrapper(
@@ -63,7 +64,7 @@ def main():
     trainer.train()
 
     # Here's how to save the model.
-    with (PathManager.PROCESSED / "elmo_model.th").open(mode="wb") as f:
+    with (PathManager.PROCESSED / "token_model.th").open(mode="wb") as f:
         torch.save(model.state_dict(), f)
     vocab.save_to_files(str(PathManager.PROCESSED / "vocabulary"))
 
