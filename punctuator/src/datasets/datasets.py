@@ -11,7 +11,7 @@ from overrides import overrides
 class PunctuatorTokenizer:
 
     @staticmethod
-    def split_words(s):
+    def split_words(s: str) -> List[Token]:
         return [Token(_.split("###")[0]) for _ in str(s).split(" ")]
 
 
@@ -28,7 +28,7 @@ class PunctuatorDatasetReader(DatasetReader):
         for sent in df["0"]:
             t = str(sent).strip().split(" ")
             tokens = [Token(s.split("###")[0]) for s in t]
-            tags = [s.split("###")[1] for s in t]
+            tags = [s.split("###")[1].replace('#', '') for s in t]
 
             yield self.text_to_instance(tokens=tokens, tags=tags)
 
