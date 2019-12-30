@@ -31,7 +31,7 @@ def main():
     dev_dataset = reader.read(str(PathManager.RAW / "dev.csv"))
 
     vocab = Vocabulary.from_instances(train_dataset + dev_dataset)
-    token_embedding = Embedding()
+    token_embedding = Embedding(Config.EMBED_DIM)
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
     gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True,
