@@ -8,20 +8,16 @@ def tagmap(word: str) -> str:
         return "PERIOD"
     if word == "?":
         return "QUESTION"
-    if word in [",", ":"]:
+    if word in [",", ":", '-']:
         return "COMMA"
     else:
         return "O"
 
 
 def tagging(sentence: str) -> str:
-    words = sentence.replace(".",
-                             " .").replace("?",
-                                           " ?").replace(",",
-                                                         " ,").replace("!",
-                                                                       " !").replace(";",
-                                                                                     " ;").replace(":",
-                                                                                                   " :").split(" ")
+    words = sentence.replace(".", " .").replace("?", " ?").replace(",",
+                                                                   " ,").replace("!", " !").replace(";", " ;").replace(
+                                                                       ":", " :").replace('-', ' -').split(" ")
     sent = []
 
     for i in range(len(words) - 1):
