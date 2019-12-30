@@ -34,9 +34,9 @@ def main():
     token_embedding = Embedding()
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
-    lstm = PytorchSeq2SeqWrapper(
-        torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
-    model: Punctuator = Punctuator(word_embeddings, lstm, vocab)
+    gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True,
+                                             bidirectional=True))
+    model: Punctuator = Punctuator(word_embeddings, gru, vocab)
 
     if torch.cuda.is_available():
         cuda_device = 0

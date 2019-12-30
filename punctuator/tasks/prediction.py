@@ -31,9 +31,9 @@ def main():
     token_embedding = ElmoTokenEmbedder(EnvFile.OPTIONS_FILE, EnvFile.WEIGHT_FILE)
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
-    lstm = PytorchSeq2SeqWrapper(
-        torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
-    model = Punctuator(word_embeddings, lstm, vocab)
+    gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True,
+                                             bidirectional=True))
+    model = Punctuator(word_embeddings, gru, vocab)
 
     with (PathManager.PROCESSED / 'elmo_model.th').open(mode='rb') as f:
         model.load_state_dict(torch.load(f))
@@ -46,7 +46,6 @@ def main():
 
     predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
     predictor._tokenizer = PunctuatorTokenizer()
-
 
     s = """Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use to perform a specific task without using explicit instructions, relying on patterns and inference instead. It is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as "training data", in order to make predictions or decisions without being explicitly programmed to perform the task.[1][2]:2 Machine learning algorithms are used in a wide variety of applications, such as email filtering and computer vision, where it is difficult or infeasible to develop a conventional algorithm for effectively performing the task."""
     logit = predictor.predict(str(s))["tag_logits"]
