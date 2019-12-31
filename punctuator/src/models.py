@@ -11,19 +11,28 @@ from allennlp.training.metrics import CategoricalAccuracy
 
 class Punctuator(Model):
 
-    def __init__(self, word_embeddings: TextFieldEmbedder, encoder: Seq2SeqEncoder, vocab: Vocabulary) -> None:
+    def __init__(self,
+                 word_embeddings: TextFieldEmbedder,
+                 encoder: Seq2SeqEncoder,
+                 vocab: Vocabulary,
+                 attention: Seq2SeqEncoder = None) -> None:
         super(Punctuator, self).__init__(vocab)
         self.word_embeddings = word_embeddings
         self.encoder = encoder
+        self.attention = attention
         self.hidden2tag = torch.nn.Linear(in_features=encoder.get_output_dim(),
                                           out_features=vocab.get_vocab_size('labels'))
         self.accuracy = CategoricalAccuracy()
 
-    def forward(self, sentence: Dict[str, torch.Tensor],
+    def forward(self,
+                sentence: Dict[str, torch.Tensor],
                 labels: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
         mask = get_text_field_mask(sentence)
         embeddings = self.word_embeddings(sentence)
         encoder_out = self.encoder(embeddings, mask)
+        if self.attention is not None:
+            attn_out = self.attention(embeddings, mask)
+            encoder_out = encoder_out * attn_out
         tag_logits = self.hidden2tag(encoder_out)
         output = {"tag_logits": tag_logits}
 

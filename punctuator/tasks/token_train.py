@@ -5,12 +5,13 @@ import torch.optim as optim
 from allennlp.data.iterators import BucketIterator
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.vocabulary import Vocabulary
-from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
+from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper, IntraSentenceAttentionEncoder
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
 from allennlp.modules.token_embedders import Embedding
 from allennlp.predictors import SentenceTaggerPredictor
 from allennlp.training import Trainer
 from sklearn.metrics import classification_report
+from allennlp.common.params import Params
 from tqdm import tqdm
 
 from punctuator.src.config import Config
@@ -32,14 +33,19 @@ def main():
 
     vocab = Vocabulary.from_instances(train_dataset + dev_dataset)
     token_embedding = Embedding(vocab.get_vocab_size(), Config.EMBED_DIM)
-    # token_embedding = Embedding(vocab.get_vocab_size(),
-    #                             Config.EMBED_DIM,
-    #                             pretrained_file='https://nlp.stanford.edu/data/glove.twitter.27B.zip')
+    # token_embedding = Embedding.from_params(
+    #     vocab,
+    #     Params({
+    #         "embedding_dim": 200,
+    #         "pretrained_file": '(https://nlp.stanford.edu/data/glove.twitter.27B.zip)#glove.twitter.27B.200d.txt'
+    #     }))
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
     gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True,
                                              bidirectional=True))
-    model: Punctuator = Punctuator(word_embeddings, gru, vocab)
+    # gru = PytorchSeq2SeqWrapper(torch.nn.GRU(200, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
+    attn = IntraSentenceAttentionEncoder(Config.HIDDEN_DIM)
+    model: Punctuator = Punctuator(word_embeddings, gru, vocab, attn)
 
     if torch.cuda.is_available():
         cuda_device = 0
