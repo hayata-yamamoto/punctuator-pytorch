@@ -18,7 +18,7 @@ from punctuator.src.datasets.datasets import (
     PunctuatorDatasetReader,
     PunctuatorTokenizer,
 )
-from punctuator.src.datasets.utils import reconstruct
+from punctuator.src.datasets.utils import reconstruct, replacing
 from punctuator.src.models import Punctuator
 from punctuator.src.path_manager import PathManager
 
@@ -76,7 +76,8 @@ def main():
     pred = []
     true = []
     for s in tqdm(df["0"]):
-        logit = predictor.predict(str(s))["tag_logits"]
+        sent = replacing(str(s))
+        logit = predictor.predict(sent)["tag_logits"]
         idx = [np.argmax(logit[i], axis=-1) for i in range(len(logit))]
         pred += [model.vocab.get_token_from_index(i, "labels") for i in idx]
         true += [_.split("###")[1] for _ in s.split(" ")]

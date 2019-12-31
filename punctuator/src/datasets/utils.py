@@ -14,10 +14,14 @@ def tagmap(word: str) -> str:
         return "O"
 
 
+def replacing(sentence: str) -> str:
+    return sentence.replace(".", " .").replace("?", " ?").replace(",", " ,").replace("!",
+                                                                                     " !").replace(";", " ;").replace(
+                                                                                         ":", " :").replace('-', ' -')
+
+
 def tagging(sentence: str) -> str:
-    words = sentence.replace(".", " .").replace("?", " ?").replace(",",
-                                                                   " ,").replace("!", " !").replace(";", " ;").replace(
-                                                                       ":", " :").replace('-', ' -').split(" ")
+    words = replacing(sentence).split(" ")
     sent = []
 
     for i in range(len(words) - 1):
