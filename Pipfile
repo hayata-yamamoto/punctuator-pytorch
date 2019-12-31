@@ -13,6 +13,7 @@ comet-ml = "*"
 yapf = "*"
 environs = "*"
 isort = "*"
+torchviz = "*"
 
 [packages]
 allennlp = "*"

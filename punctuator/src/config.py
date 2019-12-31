@@ -7,7 +7,7 @@ class Config:
     EMBED_DIM = 256
     HIDDEN_DIM = 500
     BATCH_SIZE = 128
-    EPOCH = 2
+    EPOCH = 10
     LR = 0.01
 
 
