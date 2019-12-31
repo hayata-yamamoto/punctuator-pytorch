@@ -32,6 +32,9 @@ def main():
 
     vocab = Vocabulary.from_instances(train_dataset + dev_dataset)
     token_embedding = Embedding(vocab.get_vocab_size(), Config.EMBED_DIM)
+    # token_embedding = Embedding(vocab.get_vocab_size(),
+    #                             Config.EMBED_DIM,
+    #                             pretrained_file='https://nlp.stanford.edu/data/glove.twitter.27B.zip')
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
     gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True,
@@ -82,7 +85,9 @@ def main():
 
     print(classification_report(true, pred))
 
-    s = """Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use to perform a specific task without using explicit instructions, relying on patterns and inference instead. It is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as "training data", in order to make predictions or decisions without being explicitly programmed to perform the task.[1][2]:2 Machine learning algorithms are used in a wide variety of applications, such as email filtering and computer vision, where it is difficult or infeasible to develop a conventional algorithm for effectively performing the task."""
+    s = """Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use to perform a specific task without using explicit instructions relying on patterns and inference instead It is seen as a subset of artificial intelligence Machine learning algorithms build a mathematical model based on sample data known as "training data" in order to make predictions or decisions without being explicitly programmed to perform the task Machine learning algorithms are used in a wide variety of applications such as email filtering and computer vision where it is difficult or infeasible to develop a conventional algorithm for effectively performing the task"""
+    true = """Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use to perform a specific task without using explicit instructions, relying on patterns and inference instead. It is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as "training data", in order to make predictions or decisions without being explicitly programmed to perform the task. Machine learning algorithms are used in a wide variety of applications, such as email filtering and computer vision, where it is difficult or infeasible to develop a conventional algorithm for effectively performing the task."""
+
     logit = predictor.predict(str(s))["tag_logits"]
     idx = [np.argmax(logit[i], axis=-1) for i in range(len(logit))]
     pred += [model.vocab.get_token_from_index(i, "labels") for i in idx]
@@ -90,7 +95,7 @@ def main():
     print("==============")
     print("True Sentence ")
     print("==============")
-    print(s)
+    print(true)
 
     print("==============")
     print("Predict Sentence ")
