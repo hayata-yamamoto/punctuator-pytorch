@@ -6,9 +6,9 @@ from punctuator.src.path_manager import PathManager
 class Config:
     EMBED_DIM = 256
     HIDDEN_DIM = 500
-    BATCH_SIZE = 130
+    BATCH_SIZE = 128
     EPOCH = 2
-    LR = 0.1
+    LR = 0.01
 
 
 class EnvFile:

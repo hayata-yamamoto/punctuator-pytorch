@@ -18,6 +18,7 @@ from punctuator.src.datasets.datasets import (
     PunctuatorDatasetReader,
     PunctuatorTokenizer,
 )
+from punctuator.src.datasets.utils import reconstruct
 from punctuator.src.models import Punctuator
 from punctuator.src.path_manager import PathManager
 
