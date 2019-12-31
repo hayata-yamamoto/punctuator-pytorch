@@ -85,7 +85,8 @@ def main():
     print(classification_report(true, pred))
 
     for s in tqdm(df.head()["0"]):
-        logit = predictor.predict(str(s))["tag_logits"]
+        sent = replacing(str(s))
+        logit = predictor.predict(sent)["tag_logits"]
         idx = [np.argmax(logit[i], axis=-1) for i in range(len(logit))]
         print(s)
         pred = [model.vocab.get_token_from_index(i, "labels") for i in idx]
