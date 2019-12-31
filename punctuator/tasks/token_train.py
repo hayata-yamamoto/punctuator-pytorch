@@ -43,8 +43,10 @@ def main():
 
     gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True,
                                              bidirectional=True))
+    print(gru.get_output_dim())
     # gru = PytorchSeq2SeqWrapper(torch.nn.GRU(200, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
-    attn = IntraSentenceAttentionEncoder(Config.HIDDEN_DIM)
+    attn = IntraSentenceAttentionEncoder(input_dim=gru.get_output_dim(), combination='1')
+    print(attn.get_output_dim())
     model: Punctuator = Punctuator(word_embeddings, gru, vocab, attn)
 
     if torch.cuda.is_available():

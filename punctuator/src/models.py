@@ -27,11 +27,11 @@ class Punctuator(Model):
     def forward(self,
                 sentence: Dict[str, torch.Tensor],
                 labels: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
-        mask = get_text_field_mask(sentence)
-        embeddings = self.word_embeddings(sentence)
-        encoder_out = self.encoder(embeddings, mask)
+        mask = get_text_field_mask(sentence)  # (batch_size, num_tokens)
+        embeddings = self.word_embeddings(sentence)  # (batch_size,  num_rows, embedding_size)
+        encoder_out = self.encoder(embeddings, mask)  # (batch_size, num_rows, hidden_size * 2)
         if self.attention is not None:
-            attn_out = self.attention(embeddings, mask)
+            attn_out = self.attention(encoder_out, mask)
             encoder_out = encoder_out * attn_out
         tag_logits = self.hidden2tag(encoder_out)
         output = {"tag_logits": tag_logits}

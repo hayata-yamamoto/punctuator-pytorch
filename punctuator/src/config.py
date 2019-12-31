@@ -9,6 +9,7 @@ class Config:
     BATCH_SIZE = 128
     EPOCH = 10
     LR = 0.01
+    GLOVE_DIM = 200
 
 
 class EnvFile:
