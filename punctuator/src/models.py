@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 import torch
+import torch.nn.functional as F
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.models import Model
 from allennlp.modules.seq2seq_encoders import Seq2SeqEncoder
@@ -30,10 +31,13 @@ class Punctuator(Model):
         mask = get_text_field_mask(sentence)  # (batch_size, num_tokens)
         embeddings = self.word_embeddings(sentence)  # (batch_size,  num_rows, embedding_size)
         encoder_out = self.encoder(embeddings, mask)  # (batch_size, num_rows, hidden_size * 2)
+
         if self.attention is not None:
             attn_out = self.attention(encoder_out, mask)
             encoder_out = encoder_out * attn_out
-        tag_logits = self.hidden2tag(encoder_out)
+
+        tag_space = self.hidden2tag(encoder_out)
+        tag_logits = F.log_softmax(tag_space, dim=1)
         output = {"tag_logits": tag_logits}
 
         if labels is not None:
