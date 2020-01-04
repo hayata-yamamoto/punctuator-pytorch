@@ -10,7 +10,7 @@ class Config:
     EPOCH = 10
     LR = 0.01
     GLOVE_DIM = 200
-    PATIENCE = 5
+    PATIENCE = 2
     SUMMARY_INTERVAL = 10
 
 

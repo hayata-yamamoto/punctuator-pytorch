@@ -41,8 +41,13 @@ def main():
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
     gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.GLOVE_DIM), Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
-    attn = IntraSentenceAttentionEncoder(input_dim=gru.get_output_dim(), combination='1')
-    model: Punctuator = Punctuator(word_embeddings, gru, vocab, attn)
+    # attn = IntraSentenceAttentionEncoder(input_dim=gru.get_output_dim(), combination='1')
+    model: Punctuator = Punctuator(
+        word_embeddings,
+         gru, 
+         vocab, 
+         # attn
+    )
 
     if torch.cuda.is_available():
         cuda_device = 0
@@ -60,7 +65,7 @@ def main():
         iterator=iterator,
         train_dataset=train_dataset,
         validation_dataset=dev_dataset,
-        validation_metric="+accuracy",
+        validation_metric="-loss",
         patience=Config.PATIENCE,
         summary_interval=Config.SUMMARY_INTERVAL,
         num_epochs=Config.EPOCH,

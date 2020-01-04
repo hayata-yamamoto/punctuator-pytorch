@@ -54,7 +54,7 @@ def main():
         iterator=iterator,
         train_dataset=train_dataset,
         validation_dataset=dev_dataset,
-        validation_metric="+accuracy",
+        validation_metric="-loss",
         patience=Config.PATIENCE,
         summary_interval=Config.SUMMARY_INTERVAL,
         num_epochs=Config.EPOCH,
