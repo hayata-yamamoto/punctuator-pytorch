@@ -51,7 +51,7 @@ def main():
     else:
         cuda_device = -1
 
-    optimizer = optim.Adam(model.parameters())
+    optimizer = optim.Adam(model.parameters(), lr=Config.LR)
     iterator = BucketIterator(batch_size=Config.BATCH_SIZE, sorting_keys=[("sentence", "num_tokens")])
     iterator.index_with(vocab)
 

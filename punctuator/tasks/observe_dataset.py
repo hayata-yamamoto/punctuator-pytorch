@@ -17,13 +17,17 @@ def parse(sent: str) -> pd.Series:
 
 
 def main() -> None:
-    train_df = pd.read_csv(PathManager.RAW / 'train.csv').fillna('')
-    val_df = pd.read_csv(PathManager.RAW / 'dev.csv').fillna('')
-    test_df = pd.read_csv(PathManager.RAW / 'test.csv').fillna('')
-
-    s = test_df['0'].apply(parse).fillna(0).sum()
-    print(s)
-    print(s.sum())
+    names = ['train.csv', 'dev.csv', 'test.csv']
+    for name in names:
+        df = pd.read_csv(PathManager.RAW / name).fillna('')
+        s = df['0'].apply(parse).fillna(0).sum()
+        print('----------------')
+        print(f'     {name}     ')
+        print('----------------')
+        print(df.shape)
+        print(s)
+        print(s.sum())
+        print('\n')
 
 
 if __name__ == '__main__':

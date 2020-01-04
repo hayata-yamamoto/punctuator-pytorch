@@ -8,7 +8,7 @@ class Config:
     HIDDEN_DIM = 500
     BATCH_SIZE = 8
     EPOCH = 10
-    LR = 0.01
+    LR = 0.001
     GLOVE_DIM = 200
     PATIENCE = 2
     SUMMARY_INTERVAL = 10
