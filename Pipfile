@@ -38,6 +38,9 @@ install = "python3 setup.py install"
 develop = "python3 setup.py develop"
 # Formatter
 format = "yapf --recursive -i punctuator"
+token = "python3 punctuator/tasks/train_token.py"
+glove = "python3 punctuator/tasks/train_glove.py"
+elmo = "python3 punctuator/tasks/train_elmo.py"
 
 [pipenv]
 allow_prereleases = true
