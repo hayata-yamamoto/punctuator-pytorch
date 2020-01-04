@@ -6,7 +6,7 @@ from punctuator.src.path_manager import PathManager
 class Config:
     EMBED_DIM = 256
     HIDDEN_DIM = 500
-    BATCH_SIZE = 128
+    BATCH_SIZE = 8
     EPOCH = 10
     LR = 0.01
     GLOVE_DIM = 200
