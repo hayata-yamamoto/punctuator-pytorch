@@ -57,8 +57,8 @@ def main():
         train_dataset=train_dataset,
         validation_dataset=dev_dataset,
         validation_metric="+accuracy",
-        patience=2,
-        summary_interval=2,
+        patience=Config.PATIENCE,
+        summary_interval=Config.SUMMARY_INTERVAL,
         num_epochs=Config.EPOCH,
         cuda_device=cuda_device,
     )

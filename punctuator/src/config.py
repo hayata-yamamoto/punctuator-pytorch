@@ -7,9 +7,11 @@ class Config:
     EMBED_DIM = 256
     HIDDEN_DIM = 500
     BATCH_SIZE = 128
-    EPOCH = 10
+    EPOCH = 100
     LR = 0.01
     GLOVE_DIM = 200
+    PATIENCE = 5
+    SUMMARY_INTERVAL = 10
 
 
 class EnvFile:

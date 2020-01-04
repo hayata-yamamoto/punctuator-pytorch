@@ -35,12 +35,12 @@ def main():
     token_embedding = Embedding.from_params(
         vocab,
         Params({
-            "embedding_dim": 200,
+            "embedding_dim": Config.GLOVE_DIM,
             "pretrained_file": '(https://nlp.stanford.edu/data/glove.twitter.27B.zip)#glove.twitter.27B.200d.txt'
         }))
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
-    gru = PytorchSeq2SeqWrapper(torch.nn.GRU(200, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
+    gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.GLOVE_DIM), Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
     attn = IntraSentenceAttentionEncoder(input_dim=gru.get_output_dim(), combination='1')
     model: Punctuator = Punctuator(word_embeddings, gru, vocab, attn)
 
@@ -61,8 +61,8 @@ def main():
         train_dataset=train_dataset,
         validation_dataset=dev_dataset,
         validation_metric="+accuracy",
-        patience=2,
-        summary_interval=2,
+        patience=Config.PATIENCE,
+        summary_interval=Config.SUMMARY_INTERVAL,
         num_epochs=Config.EPOCH,
         cuda_device=cuda_device,
     )
@@ -70,7 +70,7 @@ def main():
     trainer.train()
 
     # Here's how to save the model.
-    with (PathManager.PROCESSED / "token_model.th").open(mode="wb") as f:
+    with (PathManager.PROCESSED / "glove_model.th").open(mode="wb") as f:
         torch.save(model.state_dict(), f)
     vocab.save_to_files(str(PathManager.PROCESSED / "vocabulary"))
 
