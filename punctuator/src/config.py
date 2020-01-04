@@ -7,10 +7,10 @@ class Config:
     EMBED_DIM = 256
     HIDDEN_DIM = 500
     BATCH_SIZE = 8
-    EPOCH = 10
+    EPOCH = 100
     LR = 0.001
     GLOVE_DIM = 200
-    PATIENCE = 2
+    PATIENCE = 5
     SUMMARY_INTERVAL = 10
 
 
