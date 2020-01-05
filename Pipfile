@@ -36,8 +36,10 @@ python_version = "3.7"
 [scripts]
 install = "python3 setup.py install"
 develop = "python3 setup.py develop"
-# Formatter
 format = "yapf --recursive -i punctuator"
+
+# job scripts
+dataset = "python3 punctuator/tasks/create_dataset.py"
 token = "python3 punctuator/tasks/train_token.py"
 glove = "python3 punctuator/tasks/train_glove.py"
 elmo = "python3 punctuator/tasks/train_elmo.py"

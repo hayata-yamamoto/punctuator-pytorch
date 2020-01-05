@@ -35,8 +35,8 @@ def main():
     token_embedding = Embedding(vocab.get_vocab_size(), Config.EMBED_DIM)
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
-    gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True,
-                                             bidirectional=True))
+    gru = PytorchSeq2SeqWrapper(
+        torch.nn.LSTM(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
     # attn = IntraSentenceAttentionEncoder(input_dim=gru.get_output_dim(), combination='1')
     model: Punctuator = Punctuator(
         word_embeddings,
