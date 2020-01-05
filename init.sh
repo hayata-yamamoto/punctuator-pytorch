@@ -20,6 +20,6 @@ sudo apt install -y \
 && pip3 install pipenv \
 && pipenv sync --dev \
 && pipenv develop \
-&& pipenv run develop \ 
+&& pipenv run develop \
 && mv credentials/.env-sample credentials/.env
 
