@@ -18,7 +18,7 @@ sudo apt install -y \
 && pyenv install 3.7.5 \
 && pyenv local 3.7.5 \
 && pip3 install pipenv \
-&& pipenv sync --dev
+&& pipenv sync --dev \
 && pipenv develop \
 && pipenv run develop \ 
 && mv credentials/.env-sample credentials/.env
