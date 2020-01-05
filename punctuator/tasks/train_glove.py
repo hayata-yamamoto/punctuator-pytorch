@@ -42,13 +42,10 @@ def main():
 
     gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.GLOVE_DIM, Config.HIDDEN_DIM, batch_first=True,
                                              bidirectional=True))
-    # attn = IntraSentenceAttentionEncoder(input_dim=gru.get_output_dim(), combination='1')
-    model: Punctuator = Punctuator(
-        word_embeddings,
-        gru,
-        vocab,
-        # attn
-    )
+    attn = IntraSentenceAttentionEncoder(input_dim=Config.GLOVE_DIM,
+                                         projection_dim=Config.HIDDEN_DIM * 2,
+                                         combination='2')
+    model: Punctuator = Punctuator(word_embeddings, gru, vocab, attn)
 
     if torch.cuda.is_available():
         cuda_device = 0
@@ -69,7 +66,7 @@ def main():
         validation_metric="-loss",
         patience=Config.PATIENCE,
         summary_interval=Config.SUMMARY_INTERVAL,
-        num_epochs=Config.EPOCH,
+        num_epochs=1,
         cuda_device=cuda_device,
     )
 
@@ -94,14 +91,6 @@ def main():
         true += [_.split("###")[1] for _ in sent.split(" ")]
 
     print(classification_report(true, pred))
-
-    for s in tqdm(df.head()["0"]):
-        sent = replacing(str(s))
-        logit = predictor.predict(sent)["tag_logits"]
-        idx = [np.argmax(logit[i], axis=-1) for i in range(len(logit))]
-        print(s)
-        pred = [model.vocab.get_token_from_index(i, "labels") for i in idx]
-        print(reconstruct(sent.strip().split(" "), pred))
 
 
 if __name__ == "__main__":

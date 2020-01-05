@@ -29,11 +29,11 @@ class Punctuator(Model):
                 sentence: Dict[str, torch.Tensor],
                 labels: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
         mask = get_text_field_mask(sentence)  # (batch_size, num_tokens)
-        embeddings = self.word_embeddings(sentence)  # (batch_size,  num_rows, embedding_size)
-        out = self.encoder(embeddings, mask)  # (batch_size, num_rows, hidden_size * 2)
+        emb = self.word_embeddings(sentence)  # (batch_size, num_rows, embedding_size)
+        out = self.encoder(emb, mask)  # (batch_size, num_rows, hidden_size * 2)
 
         if self.attention is not None:
-            attn = self.attention(out, mask)
+            attn = self.attention(emb, mask)
             out *= attn
 
         tag_space = self.hidden2tag(out)

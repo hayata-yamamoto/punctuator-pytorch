@@ -12,7 +12,7 @@ class PunctuatorTokenizer:
 
     @staticmethod
     def split_words(s: str) -> List[Token]:
-        return [Token(_.split("###")[0]) for _ in str(s).split(" ")]
+        return [Token(_.split("###")[0]) for _ in str(s).split(" ") if _ != ""]
 
 
 class PunctuatorDatasetReader(DatasetReader):
@@ -27,8 +27,8 @@ class PunctuatorDatasetReader(DatasetReader):
 
         for sent in df["0"]:
             t = str(sent).strip().split(" ")
-            tokens = [Token(s.split("###")[0]) for s in t]
-            tags = [s.split("###")[1].replace('#', '') for s in t]
+            tokens = [Token(s.split("###")[0]) for s in t if s != ""]
+            tags = [s.split("###")[1].replace('#', '') for s in t if s != ""]
 
             yield self.text_to_instance(tokens=tokens, tags=tags)
 
