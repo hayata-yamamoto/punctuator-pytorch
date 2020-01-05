@@ -88,9 +88,9 @@ def main():
         sent = replacing(str(s))
         logit = predictor.predict(sent)["tag_logits"]
         idx = [np.argmax(logit[i], axis=-1) for i in range(len(logit))]
-        print(s)
+        print(sent)
         pred = [model.vocab.get_token_from_index(i, "labels") for i in idx]
-        print(reconstruct(s.strip().split(" "), pred))
+        print(reconstruct(sent.strip().split(" "), pred))
 
 
 if __name__ == "__main__":

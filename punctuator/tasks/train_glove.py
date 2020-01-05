@@ -91,7 +91,7 @@ def main():
         logit = predictor.predict(sent)["tag_logits"]
         idx = [np.argmax(logit[i], axis=-1) for i in range(len(logit))]
         pred += [model.vocab.get_token_from_index(i, "labels") for i in idx]
-        true += [_.split("###")[1] for _ in s.split(" ")]
+        true += [_.split("###")[1] for _ in sent.split(" ")]
 
     print(classification_report(true, pred))
 
@@ -101,7 +101,7 @@ def main():
         idx = [np.argmax(logit[i], axis=-1) for i in range(len(logit))]
         print(s)
         pred = [model.vocab.get_token_from_index(i, "labels") for i in idx]
-        print(reconstruct(s.strip().split(" "), pred))
+        print(reconstruct(sent.strip().split(" "), pred))
 
 
 if __name__ == "__main__":

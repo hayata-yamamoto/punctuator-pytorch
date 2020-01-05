@@ -30,13 +30,13 @@ class Punctuator(Model):
                 labels: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
         mask = get_text_field_mask(sentence)  # (batch_size, num_tokens)
         embeddings = self.word_embeddings(sentence)  # (batch_size,  num_rows, embedding_size)
-        encoder_out = self.encoder(embeddings, mask)  # (batch_size, num_rows, hidden_size * 2)
+        out = self.encoder(embeddings, mask)  # (batch_size, num_rows, hidden_size * 2)
 
-        # if self.attention is not None:
-        #     attn_out = self.attention(encoder_out, mask)
-        #     encoder_out = encoder_out * attn_out
+        if self.attention is not None:
+            attn = self.attention(out, mask)
+            out *= attn
 
-        tag_space = self.hidden2tag(encoder_out)
+        tag_space = self.hidden2tag(out)
         tag_logits = F.log_softmax(tag_space, dim=1)
         output = {"tag_logits": tag_logits}
 
