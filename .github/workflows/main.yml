@@ -41,8 +41,8 @@ jobs:
         poetry_version: ${{ env.POETRY_VERSION }}
         working_directory: ${{ env.WORK_DIR }}
         args: |
-        add flake8 --dev
-        run lint
+          add flake8 --dev
+          run lint
 
     - name: Format check with yapf
       uses: abatilo/actions-poetry@v1.5.0
