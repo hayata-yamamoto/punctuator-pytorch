@@ -1,5 +1,5 @@
 .idea/
-punctuator/data
+punctuator/data/
 !punctuator/credentials/.env-sample
 *.csv
 
