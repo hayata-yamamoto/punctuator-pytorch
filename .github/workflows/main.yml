@@ -19,9 +19,8 @@ jobs:
 
     - name: Set up cache
       uses: actions/cache@v1
-      working-directory: ./punctuator
       with:
-        path: .venv
+        path: ./punctuator/.venv
         key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
 
     - name: Lint with flake8
