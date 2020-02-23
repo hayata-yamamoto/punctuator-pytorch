@@ -40,12 +40,12 @@ def tagging(sentence: str) -> str:
 
 def reconstruct(seq: List[str], labels: List[str]) -> str:
     res = []
-    for s, l in zip(seq, labels):
-        if l == "PERIOD":
+    for s, label in zip(seq, labels):
+        if label == "PERIOD":
             res.append(s + ".")
-        elif l == "QUESTION":
+        elif label == "QUESTION":
             res.append(s + "?")
-        elif l == "COMMA":
+        elif label == "COMMA":
             res.append(s + ",")
         else:
             res.append(s)
