@@ -14,13 +14,11 @@ from sklearn.metrics import classification_report
 from tqdm import tqdm
 
 from punctuator.src.config import Config
-from punctuator.src.datasets import (
-    PunctuatorDatasetReader,
-    PunctuatorTokenizer,
-)
-from punctuator.src.utils import replacing
+from punctuator.src.datasets import (PunctuatorDatasetReader,
+                                     PunctuatorTokenizer)
 from punctuator.src.models import Punctuator
 from punctuator.src.path_manager import PathManager
+from punctuator.src.utils import replacing
 
 
 def main():

@@ -2,26 +2,25 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.optim as optim
+from allennlp.common.params import Params
 from allennlp.data.iterators import BucketIterator
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.vocabulary import Vocabulary
-from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper, IntraSentenceAttentionEncoder
+from allennlp.modules.seq2seq_encoders import (IntraSentenceAttentionEncoder,
+                                               PytorchSeq2SeqWrapper)
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
 from allennlp.modules.token_embedders import Embedding
 from allennlp.predictors import SentenceTaggerPredictor
 from allennlp.training import Trainer
 from sklearn.metrics import classification_report
-from allennlp.common.params import Params
 from tqdm import tqdm
 
 from punctuator.src.config import Config
-from punctuator.src.datasets import (
-    PunctuatorDatasetReader,
-    PunctuatorTokenizer,
-)
-from punctuator.src.utils import replacing
+from punctuator.src.datasets import (PunctuatorDatasetReader,
+                                     PunctuatorTokenizer)
 from punctuator.src.models import Punctuator
 from punctuator.src.path_manager import PathManager
+from punctuator.src.utils import replacing
 
 
 def main():
