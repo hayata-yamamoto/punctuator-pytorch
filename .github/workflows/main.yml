@@ -34,20 +34,14 @@ jobs:
         working_directory: ${{ env.WORK_DIR }}
         args: install
 
-    - shell: bash
-      run: |
-        ls
-        cd ..
-        ls
-
-    - name: Lint with flake8
-      uses: abatilo/actions-poetry@v1.5.0
-      with:
-        python_version: ${{ matrix.PYTHON_VERSION }}
-        poetry_version: ${{ env.POETRY_VERSION }}
-        working_directory: ${{ env.WORK_DIR }}
-        args: |
-          run lint
+#    - name: Lint with flake8
+#      uses: abatilo/actions-poetry@v1.5.0
+#      with:
+#        python_version: ${{ matrix.PYTHON_VERSION }}
+#        poetry_version: ${{ env.POETRY_VERSION }}
+#        working_directory: ${{ env.WORK_DIR }}
+#        args: |
+#          run flake8 punctuator
 
     - name: Format check with yapf
       uses: abatilo/actions-poetry@v1.5.0
@@ -56,14 +50,14 @@ jobs:
         poetry_version: ${{ env.POETRY_VERSION }}
         working_directory: ${{ env.WORK_DIR }}
         args: |
-          run foramt-check
+          run yapf -r -d --style pep8 punctuator
 
-    - name: Import check with isort
-      uses: abatilo/actions-poetry@v1.5.0
-      with:
-        python_version: ${{ matrix.PYTHON_VERSION }}
-        poetry_version: ${{ env.POETRY_VERSION }}
-        working_directory: ${{ env.WORK_DIR }}
-        args: |
-          run import-check
+#    - name: Import check with isort
+#      uses: abatilo/actions-poetry@v1.5.0
+#      with:
+#        python_version: ${{ matrix.PYTHON_VERSION }}
+#        poetry_version: ${{ env.POETRY_VERSION }}
+#        working_directory: ${{ env.WORK_DIR }}
+#        args: |
+#          run isort -rc -d -c punctuator
 
