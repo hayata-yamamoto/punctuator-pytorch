@@ -17,14 +17,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install libraries
-      uses: abatilo/actions-poetry@v1.5.0
-      with:
-        python_version: ${{ matrix.PYTHON_VERSION }}
-        poetry_version: ${{ env.POETRY_VERSION }}
-        working_directory: ${{ env.WORK_DIR }}
-        args: install
-
     - name: Set up cache
       uses: actions/cache@v1
       with:
@@ -34,6 +26,20 @@ jobs:
           ${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
           ${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-
 
+    - name: Install libraries
+      uses: abatilo/actions-poetry@v1.5.0
+      with:
+        python_version: ${{ matrix.PYTHON_VERSION }}
+        poetry_version: ${{ env.POETRY_VERSION }}
+        working_directory: ${{ env.WORK_DIR }}
+        args: install
+
+    - shell: bash
+      run: |
+        ls
+        cd ..
+        ls
+
     - name: Lint with flake8
       uses: abatilo/actions-poetry@v1.5.0
       with:
@@ -41,7 +47,6 @@ jobs:
         poetry_version: ${{ env.POETRY_VERSION }}
         working_directory: ${{ env.WORK_DIR }}
         args: |
-          add flake8 --dev
           run lint
 
     - name: Format check with yapf
@@ -51,7 +56,6 @@ jobs:
         poetry_version: ${{ env.POETRY_VERSION }}
         working_directory: ${{ env.WORK_DIR }}
         args: |
-          add yapf --dev
           run foramt-check
 
     - name: Import check with isort
@@ -61,6 +65,5 @@ jobs:
         poetry_version: ${{ env.POETRY_VERSION }}
         working_directory: ${{ env.WORK_DIR }}
         args: |
-          add isort --dev
           run import-check
 
