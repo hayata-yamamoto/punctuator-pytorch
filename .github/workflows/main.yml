@@ -19,7 +19,7 @@ jobs:
 
     - name: Set up cache
       uses: actions/cache@v1
-      working-director: ./punctuator
+      working-directory: ./punctuator
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
