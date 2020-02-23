@@ -9,6 +9,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Set up cache
+      uses: actions/cache@v1
+      with:
+        path: ./punctuator/.venv
+        key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+
     - name: Install
       uses: abatilo/actions-poetry@v1.5.0
       with:
@@ -16,12 +22,6 @@ jobs:
         poetry_version: 1.0.0
         working_directory: ./punctuator # Optional, defaults to '.'
         args: install
-
-    - name: Set up cache
-      uses: actions/cache@v1
-      with:
-        path: ./punctuator/.venv
-        key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
 
     - name: Lint with flake8
       uses: abatilo/actions-poetry@v1.5.0
