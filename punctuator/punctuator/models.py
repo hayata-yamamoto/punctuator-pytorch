@@ -53,8 +53,10 @@ class Punctuator(Model):
             sentence)  # (batch_size, num_rows, embedding_size)
         out = self.encoder(emb,
                            mask)  # (batch_size, num_rows, hidden_size * 2)
-        attn = self.attention(out)
-        out = (out * attn)
+
+        # TODO: remove comment out
+        # attn = self.attention(out)
+        # out = (out * attn)
 
         tag_logits = self.hidden2tag(out)
         output = {"tag_logits": tag_logits}
