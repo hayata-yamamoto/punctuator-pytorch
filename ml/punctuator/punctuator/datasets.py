@@ -12,7 +12,7 @@ class PunctuatorTokenizer:
 
     @staticmethod
     def split_words(s: str) -> List[Token]:
-        return [Token(_.split("###")[0]) for _ in str(s).split(" ") if _ != ""]
+        return [Token(t.split("###")[0]) for t in str(s).split(" ") if t != ""]
 
 
 class PunctuatorDatasetReader(DatasetReader):

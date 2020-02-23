@@ -15,11 +15,11 @@ from allennlp.common.params import Params
 from tqdm import tqdm
 
 from punctuator.src.config import Config
-from punctuator.src.datasets.datasets import (
+from punctuator.src.datasets import (
     PunctuatorDatasetReader,
     PunctuatorTokenizer,
 )
-from punctuator.src.datasets.utils import reconstruct, replacing
+from punctuator.src.utils import replacing
 from punctuator.src.models import Punctuator
 from punctuator.src.path_manager import PathManager
 
@@ -45,7 +45,12 @@ def main():
     attn = IntraSentenceAttentionEncoder(input_dim=Config.GLOVE_DIM,
                                          projection_dim=Config.HIDDEN_DIM * 2,
                                          combination='2')
-    model: Punctuator = Punctuator(word_embeddings, gru, vocab, attn)
+    model: Punctuator = Punctuator(
+        word_embeddings,
+        gru,
+        vocab,
+        # attn
+    )
 
     if torch.cuda.is_available():
         cuda_device = 0

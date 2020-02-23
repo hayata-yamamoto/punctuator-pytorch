@@ -3,40 +3,45 @@ import pandas as pd
 import torch
 import torch.optim as optim
 from allennlp.data.iterators import BucketIterator
-from allennlp.data.token_indexers.elmo_indexer import ELMoTokenCharactersIndexer
+from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
-from allennlp.modules.token_embedders import ElmoTokenEmbedder
+from allennlp.modules.token_embedders import Embedding
 from allennlp.predictors import SentenceTaggerPredictor
 from allennlp.training import Trainer
 from sklearn.metrics import classification_report
 from tqdm import tqdm
 
-from punctuator.src.config import Config, EnvFile
-from punctuator.src.datasets.datasets import (
+from punctuator.src.config import Config
+from punctuator.src.datasets import (
     PunctuatorDatasetReader,
     PunctuatorTokenizer,
 )
-from punctuator.src.datasets.utils import reconstruct, replacing
+from punctuator.src.utils import replacing
 from punctuator.src.models import Punctuator
 from punctuator.src.path_manager import PathManager
 
 
 def main():
     torch.manual_seed(1)
-    token_indexer = ELMoTokenCharactersIndexer()
+    token_indexer = SingleIdTokenIndexer()
     reader = PunctuatorDatasetReader(token_indexers={"tokens": token_indexer})
     train_dataset = reader.read(str(PathManager.RAW / "train.csv"))
     dev_dataset = reader.read(str(PathManager.RAW / "dev.csv"))
 
     vocab = Vocabulary.from_instances(train_dataset + dev_dataset)
-    token_embedding = ElmoTokenEmbedder(EnvFile.OPTIONS_FILE, EnvFile.WEIGHT_FILE)
+    token_embedding = Embedding(vocab.get_vocab_size(), Config.EMBED_DIM)
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
-    gru = PytorchSeq2SeqWrapper(torch.nn.GRU(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True,
-                                             bidirectional=True))
-    model: Punctuator = Punctuator(word_embeddings, gru, vocab)
+    gru = PytorchSeq2SeqWrapper(
+        torch.nn.LSTM(Config.EMBED_DIM, Config.HIDDEN_DIM, batch_first=True, bidirectional=True))
+    model: Punctuator = Punctuator(
+        word_embeddings,
+        gru,
+        vocab,
+        # attn
+    )
 
     if torch.cuda.is_available():
         cuda_device = 0
@@ -64,23 +69,22 @@ def main():
     trainer.train()
 
     # Here's how to save the model.
-    with (PathManager.PROCESSED / "elmo_model.th").open(mode="wb") as f:
+    with (PathManager.PROCESSED / "token_model.th").open(mode="wb") as f:
         torch.save(model.state_dict(), f)
     vocab.save_to_files(str(PathManager.PROCESSED / "vocabulary"))
 
     predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
     predictor._tokenizer = PunctuatorTokenizer()
-
-    df = pd.read_csv(PathManager.RAW / 'test.csv')
+    df = pd.read_csv(PathManager.RAW / "test.csv")
 
     pred = []
     true = []
     for s in tqdm(df["0"]):
         sent = replacing(str(s))
-        logit = predictor.predict(sent)["tag_logits"]
+        logit = predictor.predict(str(s))["tag_logits"]
         idx = [np.argmax(logit[i], axis=-1) for i in range(len(logit))]
         pred += [model.vocab.get_token_from_index(i, "labels") for i in idx]
-        true += [_.split("###")[1] for _ in sent.split(" ")]
+        true += [_.split("###")[1] for _ in sent.split(" ") if _ != ""]
 
     print(classification_report(true, pred))
 
