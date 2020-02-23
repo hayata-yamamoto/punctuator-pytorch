@@ -9,17 +9,17 @@ from overrides import overrides
 
 
 class PunctuatorTokenizer:
-
     @staticmethod
     def split_words(s: str) -> List[Token]:
         return [Token(t.split("###")[0]) for t in str(s).split(" ") if t != ""]
 
 
 class PunctuatorDatasetReader(DatasetReader):
-
     def __init__(self, token_indexers: Dict[str, TokenIndexer] = None) -> None:
         super().__init__(lazy=False)
-        self.token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
+        self.token_indexers = token_indexers or {
+            "tokens": SingleIdTokenIndexer()
+        }
 
     @overrides
     def _read(self, file_path: str) -> Iterable[Instance]:
@@ -32,12 +32,15 @@ class PunctuatorDatasetReader(DatasetReader):
 
             yield self.text_to_instance(tokens=tokens, tags=tags)
 
-    def text_to_instance(self, tokens: List[Token], tags: List[str] = None) -> Instance:
+    def text_to_instance(self,
+                         tokens: List[Token],
+                         tags: List[str] = None) -> Instance:
         sentence_field = TextField(tokens, self.token_indexers)
         fields = {"sentence": sentence_field}
 
         if tags:
-            label_field = SequenceLabelField(labels=tags, sequence_field=sentence_field)
+            label_field = SequenceLabelField(labels=tags,
+                                             sequence_field=sentence_field)
             fields["labels"] = label_field
 
         return Instance(fields)
