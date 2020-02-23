@@ -15,9 +15,12 @@ def tagmap(word: str) -> str:
 
 
 def replacing(sentence: str) -> str:
-    return sentence.replace(".", " .").replace("?", " ?").replace(",", " ,").replace("!",
-                                                                                     " !").replace(";", " ;").replace(
-                                                                                         ":", " :").replace('-', ' -')
+    return sentence.replace(".", " .").replace("?", " ?").replace(
+        ",",
+        " ,").replace("!",
+                      " !").replace(";",
+                                    " ;").replace(":",
+                                                  " :").replace('-', ' -')
 
 
 def tagging(sentence: str) -> str:
@@ -25,7 +28,9 @@ def tagging(sentence: str) -> str:
     sent = []
 
     for i in range(len(words) - 1):
-        w = words[i].replace(".", "").replace("?", "").replace("!", "").replace(",", "")
+        w = words[i].replace(".", "").replace("?",
+                                              "").replace("!",
+                                                          "").replace(",", "")
         if w == "":
             continue
 
@@ -35,12 +40,12 @@ def tagging(sentence: str) -> str:
 
 def reconstruct(seq: List[str], labels: List[str]) -> str:
     res = []
-    for s, l in zip(seq, labels):
-        if l == "PERIOD":
+    for s, label in zip(seq, labels):
+        if label == "PERIOD":
             res.append(s + ".")
-        elif l == "QUESTION":
+        elif label == "QUESTION":
             res.append(s + "?")
-        elif l == "COMMA":
+        elif label == "COMMA":
             res.append(s + ",")
         else:
             res.append(s)
@@ -48,4 +53,5 @@ def reconstruct(seq: List[str], labels: List[str]) -> str:
 
 
 def make_data(dataset: List[str], lang: str, filename: str) -> None:
-    pd.DataFrame([tagging(d[lang]) for d in dataset]).to_csv(filename, index=False)
+    pd.DataFrame([tagging(d[lang]) for d in dataset]).to_csv(filename,
+                                                             index=False)

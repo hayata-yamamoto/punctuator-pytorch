@@ -16,7 +16,6 @@ RUN set -x \
     cmake \
     libyaml-dev
 
-COPY ./ ./
+COPY .. ./
 
-CMD ["/bin/bash", "-c", "pip3 install pipenv && pipenv sync --dev && pipenv run python punctuator/tasks/create_dataset.py && pipenv run python punctuator/tasks/train.py"]
-
+CMD ["/bin/bash", "-c", "echo hello world"]

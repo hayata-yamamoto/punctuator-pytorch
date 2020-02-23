@@ -1,7 +1,9 @@
-from punctuator.src.path_manager import PathManager
-import pandas as pd
-from collections import Counter
 import re
+from collections import Counter
+
+import pandas as pd
+
+from punctuator.src.path_manager import PathManager
 
 
 def parse(sent: str) -> pd.Series:
