@@ -29,7 +29,7 @@ jobs:
         python_version: 3.7.5
         poetry_version: 1.0.0
         working_directory: ./punctuator
-        args: run flake8 punctuator --count --select=E9,F63,F7,F82 --show-source --statistics
+        args: run lint
 
     - name: Formatter
       uses: abatilo/actions-poetry@v1.5.0
@@ -37,7 +37,7 @@ jobs:
         python_version: 3.7.5
         poetry_version: 1.0.0
         working_directory: ./punctuator
-        args: run yapf -r -d --style pep8 punctuator
+        args: run foramt-check
 
     - name: Import optimization
       uses: abatilo/actions-poetry@v1.5.0
@@ -45,5 +45,5 @@ jobs:
         python_version: 3.7.5
         poetry_version: 1.0.0
         working_directory: ./punctuator
-        args: run isort -rc -d -c punctuator
+        args: run import-check
 
