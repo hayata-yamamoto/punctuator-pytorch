@@ -24,4 +24,3 @@ async def elmo():
 @app.post('/glove', status_code=200)
 async def glove():
     return {'ok': True}
-
