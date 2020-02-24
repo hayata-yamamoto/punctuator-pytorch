@@ -1,6 +1,6 @@
 .idea/
-punctuator/data/
-!punctuator/credentials/.env-sample
+data/
+!credentials/.env-sample
 *.csv
 
 # Byte-compiled / optimized / DLL files
