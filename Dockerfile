@@ -21,8 +21,8 @@ RUN set -x \
   && export PATH=$HOME/.poetry/bin:$PATH \
   && poetry self update \
   && poetry config virtualenvs.in-project true \
-  && poetry install --no-dev
+  && poetry install
 
 COPY . app
 
-CMD ["/bin/bash", "-c", "echo hello world"]
+CMD ["uvicorn api.main:app --port 8000"]

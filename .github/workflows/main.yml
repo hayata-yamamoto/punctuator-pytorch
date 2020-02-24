@@ -4,7 +4,7 @@ on: [push]
 
 env:
   POETRY_VERSION: 1.0.0
-  WORK_DIR: ./punctuator
+  WORK_DIR: .
 
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
         python_version: ${{ matrix.PYTHON_VERSION }}
         poetry_version: ${{ env.POETRY_VERSION }}
         working_directory: ${{ env.WORK_DIR }}
-        args: run flake8 punctuator
+        args: run flake8 .
 
     - name: Format check with yapf
       uses: abatilo/actions-poetry@v1.5.0
@@ -48,7 +48,7 @@ jobs:
         python_version: ${{ matrix.PYTHON_VERSION }}
         poetry_version: ${{ env.POETRY_VERSION }}
         working_directory: ${{ env.WORK_DIR }}
-        args: run yapf -r -d --style pep8 punctuator
+        args: run yapf -r -d --style pep8 .
 
     - name: Import check with isort
       uses: abatilo/actions-poetry@v1.5.0
@@ -56,5 +56,5 @@ jobs:
         python_version: ${{ matrix.PYTHON_VERSION }}
         poetry_version: ${{ env.POETRY_VERSION }}
         working_directory: ${{ env.WORK_DIR }}
-        args: run isort -rc -d -c punctuator
+        args: run isort -rc -d -c .
 
