@@ -730,6 +730,18 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 category = "main"
+description = "Text utilities and datasets for PyTorch"
+name = "pytorch-nlp"
+optional = false
+python-versions = ">=3.5"
+version = "0.5.0"
+
+[package.dependencies]
+numpy = "*"
+tqdm = "*"
+
+[[package]]
+category = "main"
 description = "PyTorch version of Google AI BERT model with script to load Google pre-trained models"
 name = "pytorch-pretrained-bert"
 optional = false
@@ -1064,7 +1076,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "faedcc5263396acbacfc9491b7cdc494d1f5b8cd2aa81a44bdac53b37bbd16e1"
+content-hash = "d81ebd40e1d0bcf378028dc70137bee926e1fc14d63a88158aef10eaac362933"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -1630,6 +1642,10 @@ python-dateutil = [
 python-dotenv = [
     {file = "python-dotenv-0.11.0.tar.gz", hash = "sha256:8429f459fc041237d98c9ff32e1938e7e5535b5ff24388876315a098027c3a57"},
     {file = "python_dotenv-0.11.0-py2.py3-none-any.whl", hash = "sha256:ca9f3debf2262170d6f46571ce4d6ca1add60bb93b69c3a29dcb3d1a00a65c93"},
+]
+pytorch-nlp = [
+    {file = "pytorch-nlp-0.5.0.tar.gz", hash = "sha256:aba7aecbc6f0952edde8bc067394c8d43b74a35c5949d6106666d01a64d9cfab"},
+    {file = "pytorch_nlp-0.5.0-py3-none-any.whl", hash = "sha256:ddce6448819d1518d2694622573caff268a20c19832f55f7f5b672e2a64a400f"},
 ]
 pytorch-pretrained-bert = [
     {file = "pytorch_pretrained_bert-0.6.2-py2-none-any.whl", hash = "sha256:edf4f9c2e64ef4e3cc68a335c88938fa45c17f18300952c64ba59fa66580f2f4"},
