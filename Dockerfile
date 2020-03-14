@@ -1,8 +1,6 @@
 FROM python:3.7-slim
 
-WORKDIR app
-COPY poetry.lock poetry.lock
-COPY pyproject.toml pyproject.toml
+WORKDIR /var/www
 
 RUN set -x \
   && apt-get update -yqq \
@@ -17,12 +15,20 @@ RUN set -x \
     gcc \
     cmake \
     libyaml-dev \
-  && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python \
-  && export PATH=$HOME/.poetry/bin:$PATH \
+  && rm -rf /tmp/* /var/tmp/* \
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY poetry.lock poetry.lock
+COPY pyproject.toml pyproject.toml
+
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 \
+  && export PATH=/root/.poetry/bin:$PATH \
   && poetry self update \
-  && poetry config virtualenvs.in-project true \
-  && poetry install
+  && poetry config create.virtualenvs false \
+  && poetry install --no-dev
 
-COPY . app
+ENV PATH /root/.poetry/bin:$PATH
+COPY . /var/www
 
-CMD ["uvicorn api.main:app --port 8000"]
+CMD ["poetry run uvicorn api.main:app --port 8000"]
