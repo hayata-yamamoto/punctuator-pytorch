@@ -1,6 +1,6 @@
 FROM python:3.7-slim
 
-WORKDIR punctuator-pytorch/
+WORKDIR /var/www
 
 RUN set -x \
   && apt-get update -yqq \
@@ -14,8 +14,21 @@ RUN set -x \
     libsndfile-dev \
     gcc \
     cmake \
-    libyaml-dev
+    libyaml-dev \
+  && rm -rf /tmp/* /var/tmp/* \
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /var/lib/apt/lists/*
 
-COPY .. ./
+COPY poetry.lock poetry.lock
+COPY pyproject.toml pyproject.toml
 
-CMD ["/bin/bash", "-c", "echo hello world"]
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 \
+  && export PATH=/root/.poetry/bin:$PATH \
+  && poetry self update \
+  && poetry config create.virtualenvs false \
+  && poetry install --no-dev
+
+ENV PATH /root/.poetry/bin:$PATH
+COPY . /var/www
+
+CMD ["poetry run uvicorn api.main:app --port 8000"]

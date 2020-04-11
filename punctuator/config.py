@@ -1,6 +1,6 @@
 from environs import Env
 
-from punctuator.src.path_manager import PathManager
+from path_manager import PathManager
 
 
 class Config:
