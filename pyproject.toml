@@ -17,7 +17,7 @@ allennlp = "^0.9.0"
 mypy = "^0.761"
 flake8 = "^3.7.9"
 yapf = "^0.29.0"
-pytest = "^5.3.5"
+pytest = "^5.4.1"
 isort = "^4.3.21"
 environs = "^7.2.0"
 
