@@ -18,7 +18,7 @@ mypy = "^0.770"
 flake8 = "^3.7.9"
 yapf = "^0.30.0"
 pytest = "^5.4.1"
-isort = "^4.3.21"
+isort = "^5.6.1"
 environs = "^7.2.0"
 
 [build-system]
