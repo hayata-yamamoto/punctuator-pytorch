@@ -1,0 +1,42 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "20:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: allennlp
+    versions:
+    - 2.0.0
+    - 2.0.1
+    - 2.1.0
+    - 2.2.0
+    - 2.3.0
+    - 2.3.1
+  - dependency-name: flake8
+    versions:
+    - 3.8.4
+    - 3.9.0
+  - dependency-name: environs
+    versions:
+    - 9.3.0
+    - 9.3.1
+  - dependency-name: numpy
+    versions:
+    - 1.19.5
+    - 1.20.0
+    - 1.20.1
+  - dependency-name: pytest
+    versions:
+    - 6.2.2
+  - dependency-name: mypy
+    versions:
+    - "0.800"
+  - dependency-name: isort
+    versions:
+    - 5.7.0
+  - dependency-name: uvicorn
+    versions:
+    - 0.13.3
