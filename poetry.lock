@@ -493,7 +493,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "pydantic"
-version = "1.4"
+version = "1.6.2"
 description = "Data validation and settings management using python 3.6 type hinting"
 category = "main"
 optional = false
@@ -1291,20 +1291,23 @@ pycodestyle = [
     {file = "pycodestyle-2.5.0.tar.gz", hash = "sha256:e40a936c9a450ad81df37f549d676d127b1b66000a6c500caa2b085bc0ca976c"},
 ]
 pydantic = [
-    {file = "pydantic-1.4-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:07911aab70f3bc52bb845ce1748569c5e70478ac977e106a150dd9d0465ebf04"},
-    {file = "pydantic-1.4-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:012c422859bac2e03ab3151ea6624fecf0e249486be7eb8c6ee69c91740c6752"},
-    {file = "pydantic-1.4-cp36-cp36m-manylinux2010_i686.whl", hash = "sha256:61d22d36808087d3184ed6ac0d91dd71c533b66addb02e4a9930e1e30833202f"},
-    {file = "pydantic-1.4-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:f863456d3d4bf817f2e5248553dee3974c5dc796f48e6ddb599383570f4215ac"},
-    {file = "pydantic-1.4-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:bbbed364376f4a0aebb9ea452ff7968b306499a9e74f4db69b28ff2cd4043a11"},
-    {file = "pydantic-1.4-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:e27559cedbd7f59d2375bfd6eea29a330ea1a5b0589c34d6b4e0d7bec6027bbf"},
-    {file = "pydantic-1.4-cp37-cp37m-manylinux2010_i686.whl", hash = "sha256:50e4e948892a6815649ad5a9a9379ad1e5f090f17842ac206535dfaed75c6f2f"},
-    {file = "pydantic-1.4-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:8848b4eb458469739126e4c1a202d723dd092e087f8dbe3104371335f87ba5df"},
-    {file = "pydantic-1.4-cp38-cp38-manylinux1_i686.whl", hash = "sha256:831a0265a9e3933b3d0f04d1a81bba543bafbe4119c183ff2771871db70524ab"},
-    {file = "pydantic-1.4-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:47b8db7024ba3d46c3d4768535e1cf87b6c8cf92ccd81e76f4e1cb8ee47688b3"},
-    {file = "pydantic-1.4-cp38-cp38-manylinux2010_i686.whl", hash = "sha256:51f11c8bbf794a68086540da099aae4a9107447c7a9d63151edbb7d50110cf21"},
-    {file = "pydantic-1.4-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:6100d7862371115c40be55cc4b8d766a74b1d0dbaf99dbfe72bb4bac0faf89ed"},
-    {file = "pydantic-1.4-py36.py37.py38-none-any.whl", hash = "sha256:72184c1421103cca128300120f8f1185fb42a9ea73a1c9845b1c53db8c026a7d"},
-    {file = "pydantic-1.4.tar.gz", hash = "sha256:f17ec336e64d4583311249fb179528e9a2c27c8a2eaf590ec6ec2c6dece7cb3f"},
+    {file = "pydantic-1.6.2-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:be4e0263ef515ae14f06e9fb372843f00bdb218ec4f2f04beb3480ac1538a9a9"},
+    {file = "pydantic-1.6.2-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:14e598055b65d2e6cedf10dc3de6ad1bb04ca3eec348e4af1cf5e5e496deab55"},
+    {file = "pydantic-1.6.2-cp36-cp36m-manylinux2014_i686.whl", hash = "sha256:d09adff1c70351a8750941dd39fda25447eab2e3cdb5b2aade340f69f6f53e84"},
+    {file = "pydantic-1.6.2-cp36-cp36m-manylinux2014_x86_64.whl", hash = "sha256:cd777c102ba31bc9992093c2e9f778c21b3965566d1fa5ac9f9b7cea2e67fe2a"},
+    {file = "pydantic-1.6.2-cp36-cp36m-win_amd64.whl", hash = "sha256:548c284237b0c61e0e785ad03167c75723f22000f82e8104d8981fdf50ce14e8"},
+    {file = "pydantic-1.6.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:1d42c7408cde8a224c2bb969bfb9dca21f3b1eec37a92044be8bcd7d35ea5826"},
+    {file = "pydantic-1.6.2-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:90310c1c5945b4fe2ff7bd69e306e54d192e55d22480657ddd6d2519cf2f12ba"},
+    {file = "pydantic-1.6.2-cp37-cp37m-manylinux2014_i686.whl", hash = "sha256:bf9e5dd5e0e7e64541508f657c63bf6ab869109cb39f017f935acfeb64ea9be8"},
+    {file = "pydantic-1.6.2-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:6eea211e8b427841a16f43fa739ac06059db6af0d167476b928dbb237d870b77"},
+    {file = "pydantic-1.6.2-cp37-cp37m-win_amd64.whl", hash = "sha256:60b8956b57045224294691b78a6a4be0f321271a9f1c2a7fef25248e4c4f20df"},
+    {file = "pydantic-1.6.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:76b241172d6e22403e116e1d3b7305b6a9479323f8168f2fcb300ffe698443b9"},
+    {file = "pydantic-1.6.2-cp38-cp38-manylinux1_i686.whl", hash = "sha256:433dda6200104d7aa38c27a6ea52485e69931042556065402281cc73a57fd680"},
+    {file = "pydantic-1.6.2-cp38-cp38-manylinux2014_i686.whl", hash = "sha256:51dec047b44f0de4dbfa301b73df605918088348b951b8b4616127249febfe30"},
+    {file = "pydantic-1.6.2-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:f6a1a465dd72aff0462486588a2bf905f9169e575deec1e6f6d00240fe1b4e00"},
+    {file = "pydantic-1.6.2-cp38-cp38-win_amd64.whl", hash = "sha256:ae48129396bd5acfaef1cdaaa959ac8ab5d02c026b1fdffb421dc6fa81d7861d"},
+    {file = "pydantic-1.6.2-py36.py37.py38-none-any.whl", hash = "sha256:93f7f510fc366b99dace4a3d1f036aafcfe908092c5f2572ad4a96be24da199c"},
+    {file = "pydantic-1.6.2.tar.gz", hash = "sha256:e77e5f640f1093bf417b841d9b4148bd4212bb0dbb2cbb9024aa07f2b3b260eb"},
 ]
 pyflakes = [
     {file = "pyflakes-2.1.1-py2.py3-none-any.whl", hash = "sha256:17dbeb2e3f4d772725c777fabc446d5634d1038f234e77343108ce445ea69ce0"},
@@ -1515,10 +1518,13 @@ tokenizers = [
 ]
 torch = [
     {file = "torch-1.7.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:6b0c9b56cb56afe3ecbac79351d21c6f7172dffc7b7daa8c365f660541baf1a5"},
+    {file = "torch-1.7.0-cp36-cp36m-win_amd64.whl", hash = "sha256:b609b30b09627409612461b247531cf50894256e8b026105f1bc3858d67c2fa7"},
     {file = "torch-1.7.0-cp36-none-macosx_10_9_x86_64.whl", hash = "sha256:e8cc3b2c3937b7ae036a3b447a189af049bfc006bca054fc1d8ae78766ca3105"},
     {file = "torch-1.7.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:1520c48430dea38e5845b7b3defc9054edad45f1f245808aa268ade840bb2c2a"},
+    {file = "torch-1.7.0-cp37-cp37m-win_amd64.whl", hash = "sha256:a29a7aab6fa161259219c8aaa88b25abbf214ec098a002c4499660c23e0f6c33"},
     {file = "torch-1.7.0-cp37-none-macosx_10_9_x86_64.whl", hash = "sha256:89cb8774243750bd3fd2b3b3d09bab6e3be68b1785ad48b8411f1eb4fc7acdba"},
     {file = "torch-1.7.0-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:11054f26eee5c3114d217201dba5b3a35f1745d11133c123c077c5981bc95997"},
+    {file = "torch-1.7.0-cp38-cp38m-win_amd64.whl", hash = "sha256:83538fd7920bd02c8b6403ebe4ecee3e0641fe7bb6a18efc4585d2e1375ad1de"},
     {file = "torch-1.7.0-cp38-none-macosx_10_9_x86_64.whl", hash = "sha256:b8000e39600e101b2f19dbbab75de663a3b78e3979c3e1720b7136aae1c35ce2"},
 ]
 tqdm = [
